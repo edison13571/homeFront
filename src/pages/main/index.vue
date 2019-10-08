@@ -103,6 +103,7 @@
     align-items: center;background: #7393a7;
     color: white;
     font-size: 20px;
+    overflow: hidden;
   }
   .links-wrap-unit-logo-img{
 
