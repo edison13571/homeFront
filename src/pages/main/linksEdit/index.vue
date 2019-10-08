@@ -1,7 +1,7 @@
 <template>
   <div class="links-add">
     <div class="links-add-wrap">
-      <div class="links-add-title">新增链接</div>
+      <div class="links-add-title">修改链接</div>
       <div class="links-add-unit">
         <div class="links-add-unit-label">名称</div>
         <input class="links-add-unit-input" v-model="name"/>
@@ -36,21 +36,37 @@
 </template>
 
 <script>
-import {linksAddNew} from "../../../api";
+import {linksEditInfo} from "../../../api";
 
 export default {
-    name: 'linksAdd',
+    name: 'linksEdit',
     data() {
       return {
         name:"",
         url:"",
         type:"常用",
         theme:"",
-        img:""
+        img:"",
+        id:""
       }
     },
-    created() {
+    props:{
+      info:{
+        type:Object,
+        default:function () {
+          return{}
+        }
+      }
+    },
 
+    beforeMount() {
+      let info=this.$props.info;
+      this.name=info.name;
+      this.url=info.url;
+      this.type=info.type;
+      this.theme=info.theme;
+      this.img=info.img;
+      this.id=info._id;
     },
     methods:{
       typeChange(type){
@@ -64,6 +80,7 @@ export default {
         let data={};
         data.name=this.name;
         data.url=this.url;
+        data.id=this.id;
         if(this.type){
           data.type=this.type;
         }
@@ -73,7 +90,7 @@ export default {
         if(this.img){
           data.img=this.img;
         }
-        linksAddNew(data).then(res=>{
+        linksEditInfo(data).then(res=>{
           if (res.success){
             this.$emit('finish')
             this.$emit('close')

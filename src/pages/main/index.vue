@@ -3,58 +3,122 @@
     <div class="search-area">
       <input class="search-input" placeholder="something" v-model="searchInfo" v-on:keyup.enter="searchBaidu"/>
       <div class="search-button" @click="searchBaidu">搜索</div>
+      <div :class="local?'search-button-local-active':'search-button-local'" @click="searchLocal">主题</div>
     </div>
-  <div class="links-wrap">
-    <div class="links-wrap-unit" v-for="(item,index) in urls" :key="index" @click="linksClick(item)">
-      <div v-if="item.img!=='none'" class="links-wrap-unit-logo links-wrap-unit-logo-img">
-        <img   :src="item.img" alt=""/>
+    <div class="links-name">{{tempName}}</div>
+  <div class="links-wrap" >
+    <div class="links-tabs">
+        <div :class="type==='常用'?'links-tabs-unit-active':'links-tabs-unit'" @click="typeChange('常用')">常用</div>
+        <div :class="type==='收藏'?'links-tabs-unit-active':'links-tabs-unit'" @click="typeChange('收藏')">收藏</div>
+        <div :class="type==='临时'?'links-tabs-unit-active':'links-tabs-unit'" @click="typeChange('临时')">临时</div>
+        <div :class="linksAddShow?'links-tabs-unit-active':'links-tabs-unit'" @click="tapLink">新增</div>
+        <div :class="edit?'links-tabs-unit-active':'links-tabs-unit'" @click="changeState">{{edit?'关闭':'编辑'}}</div>
+    </div>
+    <div class="links-main">
+      <div class="links-wrap-unit" v-for="(item,index) in urls" :key="index" @click="linksClick(item)" @mouseover="linksHover(item)" @mouseout="linksHoverOut">
+        <div v-if="item.img!=='none'" class="links-wrap-unit-logo links-wrap-unit-logo-img">
+          <img   :src="item.img" alt=""/>
+        </div>
+        <div v-else class="links-wrap-unit-logo">{{item.name.charAt(0)}}</div>
+        <!--<div class="links-wrap-unit-link" >{{item.name}}</div>-->
+
       </div>
-      <div v-else class="links-wrap-unit-logo">{{item.name.charAt(0)}}</div>
-      <div class="links-wrap-unit-link" :href="item.url" target="_blank">{{item.name}}</div>
-<!--      <div>{{item.theme}}</div>-->
-    </div>
-    <div class="links-wrap-unit" @click="tapLink">
-      <div class="links-wrap-unit-logo">+</div>
-      <div class="links-wrap-unit-link">新增</div>
+
     </div>
   </div>
      <LinksAdd v-if="linksAddShow" @close="tapLink" @finish="getLinks"/>
+     <LinksEdit v-if="linksEditShow" @close="tapLinkEdit" @finish="getLinks" :info="linksEditItem"/>
   </div>
 </template>
 
 <script>
   import {linksList,useLink} from "../../api";
   import LinksAdd from "./linksAdd"
+  import LinksEdit from "./linksEdit"
   export default {
     name: 'Main',
-    components:{LinksAdd},
+    components:{LinksAdd,LinksEdit},
     data() {
       return {
         urls:[],
         linksAddShow:false,
-        searchInfo:""
+        linksEditShow:false,
+        linksEditItem:{},
+        searchInfo:"",
+        tempName:"",
+        type:"常用",
+        edit:false,
+        local:false
       }
     },
     created(){
       this.getLinks()
     },
     methods:{
-      getLinks(){
-        linksList({size:100}).then(res=>{
+      searchLocal(){
+        this.local=!this.local
+      },
+      changeState(){
+        this.edit=!this.edit
+      },
+      typeChange(type){
+        if(type!==this.type){
+          this.type=type;
+          this.getLinks()
+        }
+      },
+      searchLinks(){
+        let data={};
+        data.size=100;
+        data.theme=this.searchInfo;
+        // data.type=this.type;
+        linksList(data).then(res=>{
           this.urls=res.data.list
         })
       },
-      linksClick:function (item) {
-        window.open(item.url)
-        useLink({id:item._id}).then(res=>{
-          console.log(res)
-        })
+      getLinks(){
+        if(this.local){
+          this.searchLinks()
+        }else {
+          let data={};
+          data.size=40;
+          data.type=this.type;
+          linksList(data).then(res=>{
+            this.urls=res.data.list
+          })
+        }
+
       },
+      linksClick:function (item) {
+        if(!this.edit){
+          window.open(item.url)
+          useLink({id:item._id}).then(res=>{
+            console.log(res)
+          })
+        } else {
+          this.linksEditShow=true;
+          this.linksEditItem=item;
+        }
+
+      },
+      linksHover(item){
+        this.tempName=item.name;
+      },
+      linksHoverOut(){this.tempName=""},
       tapLink(){
         this.linksAddShow=!this.linksAddShow;
       },
+      tapLinkEdit(){
+        this.linksEditShow=false;
+        this.linksEditItem={}
+      },
       searchBaidu(){
-        window.open('https://www.baidu.com/s?wd=' + this.searchInfo)
+        if(!this.local){
+          window.open('https://www.baidu.com/s?wd=' + this.searchInfo)
+        }else {
+          this.searchLinks()
+        }
+
       }
     }
   }
@@ -66,23 +130,46 @@
     text-align: center;
     padding-top: 80px;
   }
-  .search-area{
+  .links-tabs{
+    padding-top: 30px;
+    margin-right: 20px;
+    width: 40px;
+    flex-grow: 0;
+    flex-shrink: 0;
+  }
+  .links-tabs-unit{
     margin-bottom: 20px;
+    color: white;
+    cursor: pointer;
+  }
+  .links-tabs-unit-active{
+    margin-bottom: 20px;
+    color: #7393a7;
+    cursor: pointer;
+  }
+  .links-main{
+    display: flex;
+    flex-wrap: wrap;
+  }
+  .links-name{
+    margin-bottom: 20px;
+    color: white;
+    height: 20px;
   }
   .links-wrap{
     width: 800px;
     margin: 0 auto;
     display: flex;
     justify-content: flex-start;
-    align-content: center;
-    flex-wrap: wrap;
+    align-items: start;
+
     background: #e8ecf1;
     padding: 20px;
     border-radius: 15px;
   }
   .links-wrap-unit{
     cursor: pointer;
-    flex: 20%;
+    flex: 10%;
     flex-grow: 0;
     position: relative;
     display: flex;
@@ -91,9 +178,7 @@
     padding: 10px;
 
   }
-  .links-wrap-unit-link{
-    flex: 1;
-  }
+
   .links-wrap-unit-logo{
     width: 45px;
     height: 45px;
@@ -122,7 +207,7 @@
   .search-area{
     display: flex;
     width: 600px;
-    margin: 0 auto 30px auto;
+    margin: 0 auto 10px auto;
     justify-content: space-between;
     align-items: center;
   }
@@ -136,5 +221,15 @@
   }
   .search-button{
     cursor: pointer;
+  }
+  .search-button-local{
+    cursor: pointer;
+    color: rgba(255,255,255,0.2);
+    margin-left: 10px;
+  }
+  .search-button-local-active{
+    cursor: pointer;
+    color: black;
+    margin-left: 10px;
   }
 </style>

@@ -158,6 +158,10 @@ export function linksAddNew(data) {
   return post('/api/links/add',data);
 }
 
+export function linksEditInfo(data) {
+  return post('/api/links/update',data);
+}
+
 export function useLink(data) {
   return post('/api/links/useLink',data);
 }
