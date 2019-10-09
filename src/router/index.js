@@ -4,6 +4,7 @@ import Index from '@/pages/index'
 import Login from '@/pages/login'
 import Main from '@/pages/main'
 import Ticket from '@/pages/ticket'
+import Book from '@/pages/books'
 
 Vue.use(Router)
 
@@ -28,6 +29,11 @@ export default new Router({
       path: '/ticket',
       name: 'ticket',
       component: Ticket
+    },
+    {
+      path: '/book',
+      name: 'book',
+      component: Book
     }
   ]
 })

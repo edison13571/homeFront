@@ -177,3 +177,15 @@ export function ticketsAddNew(data) {
 export function ticketsEditInfo(data) {
   return post('/api/tickets/update',data);
 }
+
+export function booksList(data) {
+  return get('/api/books/query',data);
+}
+
+export function booksAddNew(data) {
+  return post('/api/books/add',data);
+}
+
+export function booksEditInfo(data) {
+  return post('/api/books/update',data);
+}
