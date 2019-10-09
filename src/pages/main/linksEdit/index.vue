@@ -23,8 +23,8 @@
         <div class="links-add-unit-label">分类</div>
         <div class="links-add-unit-button-wrap">
           <div :class="type==='常用'?'links-add-unit-button button-active':'links-add-unit-button'" @click="typeChange('常用')">常用</div>
-          <div :class="type==='临时'?'links-add-unit-button button-active':'links-add-unit-button'" @click="typeChange('临时')">临时</div>
           <div :class="type==='收藏'?'links-add-unit-button button-active':'links-add-unit-button'" @click="typeChange('收藏')">收藏</div>
+          <div :class="type==='文章'?'links-add-unit-button button-active':'links-add-unit-button'" @click="typeChange('文章')">文章</div>
         </div>
       </div>
       <div class="links-add-button">

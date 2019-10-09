@@ -10,7 +10,7 @@
       <div class="links-tabs">
         <div :class="type==='常用'?'links-tabs-unit-active':'links-tabs-unit'" @click="typeChange('常用')">常用</div>
         <div :class="type==='收藏'?'links-tabs-unit-active':'links-tabs-unit'" @click="typeChange('收藏')">收藏</div>
-        <div :class="type==='临时'?'links-tabs-unit-active':'links-tabs-unit'" @click="typeChange('临时')">临时</div>
+        <div :class="type==='文章'?'links-tabs-unit-active':'links-tabs-unit'" @click="typeChange('文章')">文章</div>
         <div :class="linksAddShow?'links-tabs-unit-active':'links-tabs-unit'" @click="tapLink">新增</div>
         <div :class="edit?'links-tabs-unit-active':'links-tabs-unit'" @click="changeState">{{edit?'关闭':'编辑'}}</div>
       </div>
