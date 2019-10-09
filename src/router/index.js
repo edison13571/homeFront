@@ -3,6 +3,7 @@ import Router from 'vue-router'
 import Index from '@/pages/index'
 import Login from '@/pages/login'
 import Main from '@/pages/main'
+import Ticket from '@/pages/ticket'
 
 Vue.use(Router)
 
@@ -22,6 +23,11 @@ export default new Router({
       path: '/main',
       name: 'main',
       component: Main
+    },
+    {
+      path: '/ticket',
+      name: 'ticket',
+      component: Ticket
     }
   ]
 })

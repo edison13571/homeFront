@@ -1,62 +1,57 @@
 <template>
   <div class="main">
     <div class="search-area">
-      <input class="search-input" placeholder="something" v-model="searchInfo" v-on:keyup.enter="searchBaidu"/>
+      <input class="search-input" :placeholder="local?'搜索主题':'搜索名称'" v-model="searchInfo" v-on:keyup.enter="searchBaidu"/>
       <div class="search-button" @click="searchBaidu">搜索</div>
       <div :class="local?'search-button-local-active':'search-button-local'" @click="searchLocal">主题</div>
     </div>
-    <div class="links-name">{{tempName}}</div>
-    <div class="links-wrap">
-      <div class="links-tabs">
-        <div :class="type==='常用'?'links-tabs-unit-active':'links-tabs-unit'" @click="typeChange('常用')">常用</div>
-        <div :class="type==='收藏'?'links-tabs-unit-active':'links-tabs-unit'" @click="typeChange('收藏')">收藏</div>
-        <div :class="type==='临时'?'links-tabs-unit-active':'links-tabs-unit'" @click="typeChange('临时')">临时</div>
-        <div :class="linksAddShow?'links-tabs-unit-active':'links-tabs-unit'" @click="tapLink">新增</div>
-        <div :class="edit?'links-tabs-unit-active':'links-tabs-unit'" @click="changeState">{{edit?'关闭':'编辑'}}</div>
+    <div class="tickets-name">{{tempName?"《"+tempName+"》":""}}</div>
+    <div class="tickets-wrap">
+      <div class="tickets-tabs">
+        <div :class="type==='电影'?'tickets-tabs-unit-active':'tickets-tabs-unit'" @click="typeChange('电影')">电影</div>
+        <div :class="type==='电视'?'tickets-tabs-unit-active':'tickets-tabs-unit'" @click="typeChange('电视')">电视</div>
+        <div :class="type==='其他'?'tickets-tabs-unit-active':'tickets-tabs-unit'" @click="typeChange('其他')">其他</div>
+        <div :class="ticketsAddShow?'tickets-tabs-unit-active':'tickets-tabs-unit'" @click="tapLink">新增</div>
+        <div :class="edit?'tickets-tabs-unit-active':'tickets-tabs-unit'" @click="changeState">{{edit?'关闭':'编辑'}}</div>
       </div>
-      <div class="links-main">
-        <div class="links-wrap-unit" v-for="(item,index) in urls" :key="index" @click="linksClick(item)"
-             @mouseover="linksHover(item)" @mouseout="linksHoverOut">
-          <div v-if="item.img!=='none'" class="links-wrap-unit-logo links-wrap-unit-logo-img">
-            <img :src="item.img" alt=""/>
-          </div>
-          <div v-else class="links-wrap-unit-logo">{{item.name.charAt(0)}}</div>
+      <div class="tickets-main">
+        <div class="tickets-wrap-unit" v-for="(item,index) in urls" :key="index" @click="ticketsClick(item)"
+             @mouseover="ticketsHover(item)" @mouseout="ticketsHoverOut">
+          <div class="tickets-wrap-unit-logo">{{item.name.charAt(0)}}</div>
         </div>
       </div>
     </div>
-    <LinksAdd v-if="linksAddShow" @close="tapLink" @finish="getLinks"/>
-    <LinksEdit v-if="linksEditShow" @close="tapLinkEdit" @finish="getLinks" :info="linksEditItem"/>
+    <ticketsAdd v-if="ticketsAddShow" @close="tapLink" @finish="gettickets"/>
+    <ticketsEdit v-if="ticketsEditShow" @close="tapLinkEdit" @finish="gettickets" :info="ticketsEditItem"/>
     <!--以上是链接部分-->
-    <TipsArea/>
     <NavBottom/>
   </div>
 </template>
 
 <script>
-  import {linksList, useLink} from "../../api";
-  import LinksAdd from "./linksAdd"
-  import LinksEdit from "./linksEdit"
+  import {ticketsList} from "../../api";
+  import ticketsAdd from "./ticketsAdd"
+  import ticketsEdit from "./ticketsEdit"
   import NavBottom from "../../components/navBottom"
-  import TipsArea from "../../components/tipsArea"
 
   export default {
     name: 'Main',
-    components: {LinksAdd, LinksEdit,NavBottom,TipsArea},
+    components: {ticketsAdd, ticketsEdit,NavBottom},
     data() {
       return {
         urls: [],
-        linksAddShow: false,
-        linksEditShow: false,
-        linksEditItem: {},
+        ticketsAddShow: false,
+        ticketsEditShow: false,
+        ticketsEditItem: {},
         searchInfo: "",
         tempName: "",
-        type: "常用",
+        type: "电影",
         edit: false,
         local: false
       }
     },
     created() {
-      this.getLinks()
+      this.gettickets()
     },
     methods: {
       searchLocal() {
@@ -68,61 +63,67 @@
       typeChange(type) {
         if (type !== this.type) {
           this.type = type;
-          this.getLinks()
+          this.gettickets()
         }
       },
-      searchLinks() {
+      searchticketsByTheme() {
         let data = {};
         data.size = 100;
         data.theme = this.searchInfo;
-        // data.type=this.type;
-        linksList(data).then(res => {
+        ticketsList(data).then(res => {
           this.urls = res.data.list
         })
       },
-      getLinks() {
+      searchtickets() {
+        let data = {};
+        data.size = 100;
+        data.search = this.searchInfo;
+        ticketsList(data).then(res => {
+          this.urls = res.data.list
+        })
+      },
+      gettickets() {
         if (this.local) {
-          this.searchLinks()
+          this.searchtickets()
         } else {
           let data = {};
           data.size = 40;
           data.type = this.type;
-          linksList(data).then(res => {
+          ticketsList(data).then(res => {
             this.urls = res.data.list
           })
         }
 
       },
-      linksClick: function (item) {
-        if (!this.edit) {
-          window.open(item.url)
-          useLink({id: item._id}).then(res => {
-            console.log(res)
-          })
+      ticketsClick: function (item) {
+        if(this.edit){
+          this.ticketsEditShow = true;
+          this.ticketsEditItem = item;
         } else {
-          this.linksEditShow = true;
-          this.linksEditItem = item;
+          if(item.url&&item.url!=="none"){
+            window.open(item.url)
+          }
         }
 
       },
-      linksHover(item) {
+      ticketsHover(item) {
         this.tempName = item.name;
       },
-      linksHoverOut() {
+      ticketsHoverOut() {
         this.tempName = ""
       },
       tapLink() {
-        this.linksAddShow = !this.linksAddShow;
+        this.ticketsAddShow = !this.ticketsAddShow;
       },
       tapLinkEdit() {
-        this.linksEditShow = false;
-        this.linksEditItem = {}
+        this.ticketsEditShow = false;
+        this.ticketsEditItem = {}
       },
       searchBaidu() {
         if (!this.local) {
-          window.open('https://www.baidu.com/s?wd=' + this.searchInfo)
+          this.searchtickets()
         } else {
-          this.searchLinks()
+          this.searchticketsByTheme()
         }
 
       }
@@ -137,38 +138,39 @@
     padding-top: 80px;
   }
 
-  .links-tabs {
+  .tickets-tabs {
     padding-top: 30px;
     margin-right: 20px;
-    width: 40px;
+    width: 60px;
     flex-grow: 0;
     flex-shrink: 0;
+    text-align: right;
   }
 
-  .links-tabs-unit {
+  .tickets-tabs-unit {
     margin-bottom: 20px;
     color: white;
     cursor: pointer;
   }
 
-  .links-tabs-unit-active {
+  .tickets-tabs-unit-active {
     margin-bottom: 20px;
     color: #7393a7;
     cursor: pointer;
   }
 
-  .links-main {
+  .tickets-main {
     display: flex;
     flex-wrap: wrap;
   }
 
-  .links-name {
+  .tickets-name {
     margin-bottom: 20px;
     color: white;
     height: 20px;
   }
 
-  .links-wrap {
+  .tickets-wrap {
     width: 800px;
     margin: 0 auto 30px auto;
     display: flex;
@@ -180,7 +182,7 @@
     border-radius: 15px;
   }
 
-  .links-wrap-unit {
+  .tickets-wrap-unit {
     cursor: pointer;
     flex: 10%;
     flex-grow: 0;
@@ -192,7 +194,7 @@
 
   }
 
-  .links-wrap-unit-logo {
+  .tickets-wrap-unit-logo {
     width: 45px;
     height: 45px;
     border-radius: 50%;
@@ -205,19 +207,8 @@
     overflow: hidden;
   }
 
-  .links-wrap-unit-logo-img {
 
-    background: white;
-
-  }
-
-  .links-wrap-unit-logo-img img {
-    width: 35px;
-    height: 35px;
-    /*border-radius: 50%;*/
-  }
-
-  .links-wrap-unit a {
+  .tickets-wrap-unit a {
     text-decoration: none;
     color: black;
   }

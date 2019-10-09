@@ -1,0 +1,42 @@
+<template>
+  <div class="nav-wrap">
+    <router-link to="main" class="nav-wrap-unit">桌面</router-link>
+    <router-link to="ticket" class="nav-wrap-unit">票根夹</router-link>
+    <router-link to="main" class="nav-wrap-unit">书柜</router-link>
+  </div>
+</template>
+
+<script>
+  export default {
+    name: 'NavBottom',
+    data() {
+      return {
+          tabs:["main","ticket"]
+      }
+    },
+    created() {
+    },
+    methods:{
+
+    }
+  }
+</script>
+
+<style scoped>
+  .nav-wrap{
+    width: 800px;
+    margin: 0 auto 30px auto;
+    display: flex;
+    justify-content: center;
+    align-items: start;
+    background: #e8ecf1;
+    padding: 20px;
+    border-radius: 15px;
+  }
+  .nav-wrap-unit{
+    margin: 0 10px;
+    color: #b5cfd8;
+    cursor: pointer;
+    text-decoration: none;
+  }
+</style>

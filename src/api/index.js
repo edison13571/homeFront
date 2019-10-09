@@ -2,8 +2,8 @@ import axios from 'axios';
 import qs from 'qs';
 
 
-// axios.defaults.baseURL = "http://192.168.1.15:3000/";
-axios.defaults.baseURL = "http://129.211.51.250:3000/";
+axios.defaults.baseURL = "http://192.168.1.177:3000/";
+// axios.defaults.baseURL = "http://129.211.51.250:3000/";
 axios.defaults.timeout = 5000;
 // const FDFSURL=process.env.FDFS_ENDPOINT;
 /** d
@@ -22,7 +22,7 @@ axios.interceptors.response.use(function (response) {
   // 对响应错误做点什么
   if (JSON.stringify(error).indexOf('401')>-1){
     // alert('登录失效，请重新登录！');
-    window.location.href='/login'
+    window.location.href='/#/login'
   }else if (JSON.stringify(error).indexOf('500')>-1){
     // alert('网络问题，请稍后重试！');
   }
@@ -164,4 +164,16 @@ export function linksEditInfo(data) {
 
 export function useLink(data) {
   return post('/api/links/useLink',data);
+}
+
+export function ticketsList(data) {
+  return get('/api/tickets/query',data);
+}
+
+export function ticketsAddNew(data) {
+  return post('/api/tickets/add',data);
+}
+
+export function ticketsEditInfo(data) {
+  return post('/api/tickets/update',data);
 }
