@@ -35,6 +35,13 @@
           <div :class="type==='想看'?'books-add-unit-button button-active':'books-add-unit-button'" @click="typeChange('想看')">想看</div>
         </div>
       </div>
+      <div class="books-add-unit">
+        <div class="books-add-unit-label">拥有</div>
+        <div class="books-add-unit-button-wrap">
+          <div :class="own?'books-add-unit-button button-active':'books-add-unit-button'" @click="ownChange(true)">有</div>
+          <div :class="!own?'books-add-unit-button button-active':'books-add-unit-button'" @click="ownChange(false)">没有</div>
+        </div>
+      </div>
       <div class="books-add-button">
         <div class="books-add-button-unit" @click="cancel">取消</div>
         <div class="books-add-button-unit" @click="submit">提交</div>
@@ -57,7 +64,8 @@ export default {
         type:"在看",
         theme:"",
         img:"",
-        id:""
+        id:"",
+        own:true
       }
     },
     props:{
@@ -76,9 +84,17 @@ export default {
       this.type=info.type;
       this.theme=info.theme;
       this.img=info.img;
+      this.ISBN=info.ISBN;
+      this.noteUrl=info.noteUrl;
+      this.own=info.own;
       this.id=info._id;
     },
     methods:{
+      ownChange(own){
+        if(own!==this.own){
+          this.own=own;
+        }
+      },
       typeChange(type){
         if(type!==this.type){
           this.type=type;
@@ -89,8 +105,11 @@ export default {
       submit(){
         let data={};
         data.name=this.name;
-        data.url=this.url;
+        data.own=this.own;
         data.id=this.id;
+        if(this.url){
+          data.url=this.url;
+        }
         if(this.type){
           data.type=this.type;
         }
