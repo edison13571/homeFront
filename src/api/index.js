@@ -189,3 +189,18 @@ export function booksAddNew(data) {
 export function booksEditInfo(data) {
   return post('/api/books/update',data);
 }
+export function memoryDateRecent(data) {
+  return get('/api/memoryDate/queryInArray',data);
+}
+
+export function memoryDateList(data) {
+  return get('/api/memoryDate/query',data);
+}
+
+export function memoryDateAddNew(data) {
+  return post('/api/memoryDate/add',data);
+}
+
+export function memoryDateEditInfo(data) {
+  return post('/api/memoryDate/update',data);
+}

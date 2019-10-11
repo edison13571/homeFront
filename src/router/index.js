@@ -5,6 +5,7 @@ import Login from '@/pages/login'
 import Main from '@/pages/main'
 import Ticket from '@/pages/ticket'
 import Book from '@/pages/books'
+import MemoryDate from '@/pages/memoryDate'
 
 Vue.use(Router)
 
@@ -34,6 +35,11 @@ export default new Router({
       path: '/book',
       name: 'book',
       component: Book
+    },
+    {
+      path: '/memoryDate',
+      name: 'memoryDate',
+      component: MemoryDate
     }
   ]
 })
