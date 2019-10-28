@@ -1,6 +1,7 @@
 <template>
   <div class="nav-wrap">
     <router-link to="main" class="nav-wrap-unit">桌面</router-link>
+    <router-link to="note" class="nav-wrap-unit">便签</router-link>
     <router-link to="ticket" class="nav-wrap-unit">票根</router-link>
     <router-link to="book" class="nav-wrap-unit">书柜</router-link>
     <router-link to="memoryDate" class="nav-wrap-unit">纪念</router-link>
