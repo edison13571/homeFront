@@ -3,7 +3,11 @@
     <div class="tips-unit">
       <div class="tips-title">今天</div>
       <div>{{today}}</div>
-      <div v-for="(item,index) in todayList" :key="index">{{item.name}}{{item.recallMonth}}/{{item.recallDate}}</div>
+      <div v-for="(item,index) in todayList" :key="index">
+        <div v-if="item.unitType==='note'" @click="goToNote">{{item.name}}/{{item.leftTime}}</div>
+        <div v-if="item.unitType==='memoryDate'">{{item.name}}{{item.recallMonth}}/{{item.recallDate}}</div>
+
+      </div>
     </div>
     <!--<div class="tips-unit">-->
       <!--<div class="tips-hr"></div>-->
@@ -11,13 +15,16 @@
     <div class="tips-unit">
       <div class="tips-title">最近</div>
       <div>{{week}}</div>
-      <div v-for="(item,index) in recentList" :key="index">{{item.name}}{{item.recallMonth}}/{{item.recallDate}}</div>
+      <div v-for="(item,index) in recentList" :key="index">
+        <div v-if="item.unitType==='note'" @click="goToNote">{{item.name}}/{{item.leftTime}}</div>
+        <div v-if="item.unitType==='memoryDate'">{{item.name}}{{item.recallMonth}}/{{item.recallDate}}</div>
+      </div>
     </div>
   </div>
 </template>
 
 <script>
-  import {memoryDateRecent} from '../api'
+  import {memoryDateRecent,noteList} from '../api'
   export default {
     name: 'TipsArea',
     data() {
@@ -33,13 +40,35 @@
       this.getRecent();
     },
     methods:{
+      goToNote(){
+        this.$router.push("note")
+      },
       getNow:function () {
         let moment=this.$moment();
-        this.today=moment.format("YYYY-MM-DD")+moment.format("dddd");
+        this.today=moment.format("YYYY-MM-DD")+moment.format("dddd")+moment.format("a h:mm");
         let nextMoment=this.$moment().add(1,'w');
         this.week="第"+moment.format("ww")+"~"+nextMoment.format("ww")+"周";
       },
       getRecent:function () {
+
+        noteList({state:"todo"}).then(res=>{
+          let recent=[],today=[];
+          let arr=res.data.list;
+          let todayLine=this.$moment().endOf("day").valueOf();
+          let weeklyLine=this.$moment().add(1,'w').endOf('week').valueOf();
+          for(let i=0;i<arr.length;i++){
+            let temp=arr[i];
+            temp.unitType="note";
+            temp.leftTime=this.$moment(temp.deadline).fromNow(true);
+            if(temp.deadline<=todayLine){
+              today.push(temp)
+            }else if(temp.deadline<=weeklyLine){
+              recent.push(temp)
+            }
+          }
+          this.joinList(today,recent)
+        });
+
         memoryDateRecent({end:14}).then(res=>{
           let recent=[],today=[];
           let arr=res.data.list;
@@ -48,15 +77,19 @@
           let month=time.month()+1;
           for(let i=0;i<arr.length;i++){
             let temp=arr[i];
+            temp.unitType="memoryDate";
             if(temp.recallDate===day&&temp.recallMonth===month){
               today.push(temp)
             }else {
               recent.push(temp)
             }
           }
-          this.todayList=today;
-          this.recentList=recent;
+          this.joinList(today,recent)
         })
+      },
+      joinList(today,recent){
+        this.todayList=this.todayList.concat(today);
+        this.recentList=this.recentList.concat(recent);
       }
     }
   }

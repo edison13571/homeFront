@@ -19,7 +19,9 @@
             type="datetime"
             placeholder="选择日期时间"
             align="right"
-            :picker-options="pickerOptions">
+            :picker-options="pickerOptions"
+            value-format="timestamp"
+          >
           </el-date-picker>
         </div>
         <!--<input class="note-add-unit-input" v-model="deadline"/>-->
@@ -47,27 +49,31 @@ export default {
     data() {
       return {
         name:"",
-        deadline:0,
+        deadline:new Date().valueOf(),
         type:"一般",
         theme:"",
         pickerOptions: {
+          disabledDate(time){
+            return time.getTime()<Date.now()
+          },
           shortcuts: [{
-            text: '今天',
+            text: '明天之前',
             onClick(picker) {
-              picker.$emit('pick', new Date());
+              let data=new Date()
+              picker.$emit('pick', data);
             }
           }, {
-            text: '昨天',
+            text: '明天此刻',
             onClick(picker) {
               const date = new Date();
-              date.setTime(date.getTime() - 3600 * 1000 * 24);
+              date.setTime(date.getTime() + 3600 * 1000 * 24);
               picker.$emit('pick', date);
             }
           }, {
-            text: '一周前',
+            text: '一周后此时',
             onClick(picker) {
               const date = new Date();
-              date.setTime(date.getTime() - 3600 * 1000 * 24 * 7);
+              date.setTime(date.getTime() + 3600 * 1000 * 24 * 7);
               picker.$emit('pick', date);
             }
           }]
@@ -86,38 +92,21 @@ export default {
         this.$emit('close')
       },
       submit(){
-        console.log(this.deadline);
-        let data=new Date(this.deadline)
-        console.log(data)
-      //   let data={};
-      //   data.name=this.name;
-      //   data.own=this.own;
-      //   if(this.url){
-      //     data.url=this.url;
-      //   }
-      //   if(this.type){
-      //     data.type=this.type;
-      //   }
-      //   if(this.theme){
-      //     data.theme=this.theme;
-      //   }
-      //   if(this.img){
-      //     data.img=this.img;
-      //   }
-      //   if(this.ISBN){
-      //     data.ISBN=this.ISBN;
-      //   }
-      //   if(this.noteUrl){
-      //     data.noteUrl=this.noteUrl;
-      //   }
-        // noteAddNew(data).then(res=>{
-        //   if (res.success){
-        //     this.$emit('finish')
-        //     this.$emit('close')
-        //   } else {
-        //     alert(res.msg)
-        //   }
-        // })
+        let data={};
+        data.name=this.name;
+        data.type=this.type;
+        data.deadline=this.deadline;
+        if(this.theme){
+          data.theme=this.theme;
+        }
+        noteAddNew(data).then(res=>{
+          if (res.success){
+            this.$emit('finish')
+            this.$emit('close')
+          } else {
+            alert(res.msg)
+          }
+        })
 
       }
     }

@@ -1,7 +1,7 @@
 <template>
   <div class="note-add">
     <div class="note-add-wrap">
-      <div class="note-add-title">修改记录</div>
+      <div class="note-add-title">编辑便签</div>
       <div class="note-add-unit">
         <div class="note-add-unit-label">名称</div>
         <input class="note-add-unit-input" v-model="name"/>
@@ -12,34 +12,25 @@
         <input class="note-add-unit-input" v-model="theme"/>
       </div>
       <div class="note-add-unit">
-        <div class="note-add-unit-label">图片</div>
-        <input class="note-add-unit-input" v-model="img"/>
-      </div>
-      <div class="note-add-unit">
-        <div class="note-add-unit-label">ISBN</div>
-        <input class="note-add-unit-input" v-model="ISBN"/>
-      </div>
-      <div class="note-add-unit">
-        <div class="note-add-unit-label">相关链接</div>
-        <input class="note-add-unit-input" v-model="url"/>
-      </div>
-      <div class="note-add-unit">
-        <div class="note-add-unit-label">笔记链接</div>
-        <input class="note-add-unit-input" v-model="noteUrl"/>
+        <div class="note-add-unit-label">截止日期</div>
+        <div class="block">
+          <el-date-picker
+            v-model="deadline"
+            type="datetime"
+            placeholder="选择日期时间"
+            align="right"
+            :picker-options="pickerOptions"
+            value-format="timestamp"
+          >
+          </el-date-picker>
+        </div>
+        <!--<input class="note-add-unit-input" v-model="deadline"/>-->
       </div>
       <div class="note-add-unit">
         <div class="note-add-unit-label">分类</div>
         <div class="note-add-unit-button-wrap">
-          <div :class="type==='在看'?'note-add-unit-button button-active':'note-add-unit-button'" @click="typeChange('在看')">在看</div>
-          <div :class="type==='看过'?'note-add-unit-button button-active':'note-add-unit-button'" @click="typeChange('看过')">看过</div>
-          <div :class="type==='想看'?'note-add-unit-button button-active':'note-add-unit-button'" @click="typeChange('想看')">想看</div>
-        </div>
-      </div>
-      <div class="note-add-unit">
-        <div class="note-add-unit-label">拥有</div>
-        <div class="note-add-unit-button-wrap">
-          <div :class="own?'note-add-unit-button button-active':'note-add-unit-button'" @click="ownChange(true)">有</div>
-          <div :class="!own?'note-add-unit-button button-active':'note-add-unit-button'" @click="ownChange(false)">没有</div>
+          <div :class="type==='一般'?'note-add-unit-button button-active':'note-add-unit-button'" @click="typeChange('一般')">一般</div>
+          <div :class="type==='紧急'?'note-add-unit-button button-active':'note-add-unit-button'" @click="typeChange('紧急')">紧急</div>
         </div>
       </div>
       <div class="note-add-button">
@@ -57,15 +48,37 @@ export default {
     name: 'noteEdit',
     data() {
       return {
-        name:"",
-        url:"",
-        noteUrl:"",
-        ISBN:"",
-        type:"在看",
-        theme:"",
-        img:"",
         id:"",
-        own:true
+        name:"",
+        deadline:new Date().valueOf(),
+        type:"一般",
+        theme:"",
+        pickerOptions: {
+          disabledDate(time){
+            return time.getTime()<Date.now()
+          },
+          shortcuts: [{
+            text: '明天之前',
+            onClick(picker) {
+              let data=new Date()
+              picker.$emit('pick', data);
+            }
+          }, {
+            text: '明天此刻',
+            onClick(picker) {
+              const date = new Date();
+              date.setTime(date.getTime() + 3600 * 1000 * 24);
+              picker.$emit('pick', date);
+            }
+          }, {
+            text: '一周后此时',
+            onClick(picker) {
+              const date = new Date();
+              date.setTime(date.getTime() + 3600 * 1000 * 24 * 7);
+              picker.$emit('pick', date);
+            }
+          }]
+        },
       }
     },
     props:{
@@ -80,62 +93,39 @@ export default {
     beforeMount() {
       let info=this.$props.info;
       this.name=info.name;
-      this.url=info.url;
+      this.deadline=info.deadline;
       this.type=info.type;
       this.theme=info.theme;
-      this.img=info.img;
-      this.ISBN=info.ISBN;
-      this.noteUrl=info.noteUrl;
-      this.own=info.own;
       this.id=info._id;
     },
-    methods:{
-      ownChange(own){
-        if(own!==this.own){
-          this.own=own;
-        }
-      },
-      typeChange(type){
-        if(type!==this.type){
-          this.type=type;
-        }
-      },cancel(){
-        this.$emit('close')
-      },
-      submit(){
-        let data={};
-        data.name=this.name;
-        data.own=this.own;
-        data.id=this.id;
-        if(this.url){
-          data.url=this.url;
-        }
-        if(this.type){
-          data.type=this.type;
-        }
-        if(this.theme){
-          data.theme=this.theme;
-        }
-        if(this.img){
-          data.img=this.img;
-        }
-        if(this.ISBN){
-          data.ISBN=this.ISBN;
-        }
-        if(this.noteUrl){
-          data.noteUrl=this.noteUrl;
-        }
-        noteEditInfo(data).then(res=>{
-          if (res.success){
-            this.$emit('finish')
-            this.$emit('close')
-          } else {
-            alert(res.msg)
-          }
-        })
-
+  methods:{
+    typeChange(type){
+      if(type!==this.type){
+        this.type=type;
       }
+    },cancel(){
+      this.$emit('close')
+    },
+    submit(){
+      let data={};
+      data.name=this.name;
+      data.type=this.type;
+      data.deadline=this.deadline;
+      if(this.theme){
+        data.theme=this.theme;
+      }
+      data.id=this.id;
+      noteEditInfo(data).then(res=>{
+        if (res.success){
+          this.$emit('finish')
+          this.$emit('close')
+        } else {
+          alert(res.msg)
+        }
+      })
+
     }
+  }
   }
 </script>
 

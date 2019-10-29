@@ -5,12 +5,12 @@
       <div class="search-button" @click="searchBaidu">搜索</div>
       <div :class="local?'search-button-local-active':'search-button-local'" @click="searchLocal">主题</div>
     </div>
-    <div class="note-name">{{tempName?"《"+tempName+"》":""}}</div>
+    <div class="note-name">{{tempName}}</div>
     <div class="note-wrap">
       <div class="note-tabs">
-        <div :class="type==='在看'?'note-tabs-unit-active':'note-tabs-unit'" @click="typeChange('在看')">在看</div>
-        <div :class="type==='看过'?'note-tabs-unit-active':'note-tabs-unit'" @click="typeChange('看过')">看过</div>
-        <div :class="type==='想看'?'note-tabs-unit-active':'note-tabs-unit'" @click="typeChange('想看')">想看</div>
+        <div :class="state==='todo'?'note-tabs-unit-active':'note-tabs-unit'" @click="typeChange('todo')">todo</div>
+        <div :class="state==='done'?'note-tabs-unit-active':'note-tabs-unit'" @click="typeChange('done')">完成</div>
+        <div :class="state==='fail'?'note-tabs-unit-active':'note-tabs-unit'" @click="typeChange('fail')">失败</div>
         <div :class="noteAddShow?'note-tabs-unit-active':'note-tabs-unit'" @click="tapLink">新增</div>
         <div :class="edit?'note-tabs-unit-active':'note-tabs-unit'" @click="changeState">{{edit?'关闭':'编辑'}}</div>
       </div>
@@ -29,7 +29,7 @@
 </template>
 
 <script>
-  import {noteList} from "../../api";
+  import {noteList,noteEditInfo} from "../../api";
   import noteAdd from "./noteAdd"
   import noteEdit from "./noteEdit"
   import NavBottom from "../../components/navBottom"
@@ -45,7 +45,7 @@
         noteEditItem: {},
         searchInfo: "",
         tempName: "",
-        type: "在看",
+        state: "todo",
         edit: false,
         local: false
       }
@@ -60,9 +60,9 @@
       changeState() {
         this.edit = !this.edit
       },
-      typeChange(type) {
-        if (type !== this.type) {
-          this.type = type;
+      typeChange(state) {
+        if (state !== this.state) {
+          this.state = state;
           this.getnote()
         }
       },
@@ -88,7 +88,7 @@
         } else {
           let data = {};
           data.size = 40;
-          data.type = this.type;
+          data.state=this.state;
           noteList(data).then(res => {
             this.urls = res.data.list
           })
@@ -100,14 +100,24 @@
           this.noteEditShow = true;
           this.noteEditItem = item;
         } else {
-          if(item.url&&item.url!=="none"){
-            window.open(item.url)
+          if(this.state="todo"){
+            let data={};
+            data.id=item._id;
+            data.finishDate=new Date().valueOf()
+            noteEditInfo(data).then(res=>{
+              this.getnote()
+            })
           }
         }
 
       },
       noteHover(item) {
-        this.tempName = item.name;
+        let str=item.name;
+        if(item.finishDate){
+          str+="/"+this.$moment(item.finishDate).format('YYYY-MM-DD h:mm')
+        }
+          str+="/"+this.$moment(item.deadline).format('YYYY-MM-DD h:mm')
+        this.tempName = str;
       },
       noteHoverOut() {
         this.tempName = ""
