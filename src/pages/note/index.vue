@@ -100,13 +100,21 @@
           this.noteEditShow = true;
           this.noteEditItem = item;
         } else {
-          if(this.state="todo"){
-            let data={};
-            data.id=item._id;
-            data.finishDate=new Date().valueOf()
-            noteEditInfo(data).then(res=>{
-              this.getnote()
-            })
+          if(this.state==="todo"){
+            console.log(item)
+            this.$confirm('撕掉便签'+item.name+'?', '提示', {
+              confirmButtonText: '确定',
+              cancelButtonText: '取消',
+            }).then(() => {
+              let data={};
+              data.id=item._id;
+              data.finishDate=new Date().valueOf()
+              noteEditInfo(data).then(res=>{
+                this.getnote()
+              })
+            }).catch(() => {
+
+            });
           }
         }
 

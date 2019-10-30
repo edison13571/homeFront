@@ -4,7 +4,7 @@
       <div class="tips-title">今天</div>
       <div>{{today}}</div>
       <div v-for="(item,index) in todayList" :key="index">
-        <div v-if="item.unitType==='note'" @click="goToNote">{{item.name}}/{{item.leftTime}}</div>
+        <div v-if="item.unitType==='note'">{{item.name}}/{{item.leftTime}}</div>
         <div v-if="item.unitType==='memoryDate'">{{item.name}}{{item.recallMonth}}/{{item.recallDate}}</div>
 
       </div>
@@ -16,7 +16,7 @@
       <div class="tips-title">最近</div>
       <div>{{week}}</div>
       <div v-for="(item,index) in recentList" :key="index">
-        <div v-if="item.unitType==='note'" @click="goToNote">{{item.name}}/{{item.leftTime}}</div>
+        <div v-if="item.unitType==='note'">{{item.name}}/{{item.leftTime}}</div>
         <div v-if="item.unitType==='memoryDate'">{{item.name}}{{item.recallMonth}}/{{item.recallDate}}</div>
       </div>
     </div>
@@ -40,9 +40,6 @@
       this.getRecent();
     },
     methods:{
-      goToNote(){
-        this.$router.push("note")
-      },
       getNow:function () {
         let moment=this.$moment();
         this.today=moment.format("YYYY-MM-DD")+moment.format("dddd")+moment.format("a h:mm");
