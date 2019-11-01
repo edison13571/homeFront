@@ -4,6 +4,7 @@
       <div class="tips-title">今天</div>
       <div>{{today}}</div>
       <div v-for="(item,index) in todayList" :key="index">
+        <div v-if="item.unitType==='habits'&&item.schedule<item.target">{{item.title}}/{{item.target}}{{item.unit}}/已完成:{{item.schedule}}</div>
         <div v-if="item.unitType==='note'">{{item.name}}/{{item.leftTime}}</div>
         <div v-if="item.unitType==='memoryDate'">{{item.name}}{{item.recallMonth}}/{{item.recallDate}}</div>
 
@@ -16,6 +17,7 @@
       <div class="tips-title">最近</div>
       <div>{{week}}</div>
       <div v-for="(item,index) in recentList" :key="index">
+        <div v-if="item.unitType==='habits'&&item.schedule<item.target">{{item.title}}/{{item.target}}{{item.unit}}/已完成:{{item.schedule}}</div>
         <div v-if="item.unitType==='note'">{{item.name}}/{{item.leftTime}}</div>
         <div v-if="item.unitType==='memoryDate'">{{item.name}}{{item.recallMonth}}/{{item.recallDate}}</div>
       </div>
@@ -24,7 +26,7 @@
 </template>
 
 <script>
-  import {memoryDateRecent,noteList} from '../api'
+  import {memoryDateRecent,noteList,habitsList} from '../api'
   export default {
     name: 'TipsArea',
     data() {
@@ -46,7 +48,36 @@
         let nextMoment=this.$moment().add(1,'w');
         this.week="第"+moment.format("ww")+"~"+nextMoment.format("ww")+"周";
       },
+      getHabits(){
+        let moment=this.$moment();
+        let data={};
+        data.state=2;
+        if(inWorkTime(moment)){
+          data.type="normal"
+        }
+        habitsList(data).then(res=>{
+          let recent=[],today=[];
+          let arr=res.data.list;
+          for(let i=0;i<arr.length;i++){
+            let temp=arr[i];
+            temp.unitType="habits";
+            if(temp.period==="day"){
+              today.push(temp)
+            }else if(temp.period==="week"){
+              recent.push(temp)
+            }
+          }
+          this.joinList(today,recent)
+        });
+        function inWorkTime(moment) {
+          let day=moment.day();
+          let hour=moment.hour();
+          return (day===6||day===7)||(hour<=18&&hour>=9)
+        }
+      },
       getRecent:function () {
+        this.getHabits();
+
 
         noteList({state:"todo"}).then(res=>{
           let recent=[],today=[];

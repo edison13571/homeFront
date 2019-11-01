@@ -2,7 +2,7 @@ import axios from 'axios';
 import qs from 'qs';
 
 
-// axios.defaults.baseURL = "http://192.168.1.15:3000/";
+// axios.defaults.baseURL = "http://192.168.1.174:3000/";
 axios.defaults.baseURL = "http://129.211.51.250:3000/";
 axios.defaults.timeout = 5000;
 // const FDFSURL=process.env.FDFS_ENDPOINT;
@@ -215,4 +215,20 @@ export function noteAddNew(data) {
 
 export function noteEditInfo(data) {
   return post('/api/notes/update',data);
+}
+
+export function habitsList(data) {
+  return get('/api/habits/query',data);
+}
+
+export function habitsAddNew(data) {
+  return post('/api/habits/add',data);
+}
+
+export function habitsEditInfo(data) {
+  return post('/api/habits/update',data);
+}
+
+export function habitsAddRecord(data) {
+  return post('/api/habits/addRecord',data);
 }

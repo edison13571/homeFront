@@ -7,6 +7,7 @@ import Ticket from '@/pages/ticket'
 import Book from '@/pages/books'
 import MemoryDate from '@/pages/memoryDate'
 import Note from '@/pages/note'
+import Habits from '@/pages/habits'
 
 Vue.use(Router)
 
@@ -46,6 +47,11 @@ export default new Router({
       path: '/note',
       name: 'note',
       component: Note
+    },
+    {
+      path: '/habits',
+      name: 'habits',
+      component: Habits
     }
   ]
 })
