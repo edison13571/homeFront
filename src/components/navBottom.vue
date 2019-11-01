@@ -3,6 +3,7 @@
     <router-link to="main" class="nav-wrap-unit">桌面</router-link>
     <router-link to="note" class="nav-wrap-unit">便签</router-link>
     <router-link to="habits" class="nav-wrap-unit">习惯</router-link>
+    <router-link to="recite" class="nav-wrap-unit">背诵</router-link>
     <router-link to="ticket" class="nav-wrap-unit">票根</router-link>
     <router-link to="book" class="nav-wrap-unit">书柜</router-link>
     <router-link to="memoryDate" class="nav-wrap-unit">纪念</router-link>
