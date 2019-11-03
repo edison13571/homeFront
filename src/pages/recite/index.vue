@@ -6,12 +6,13 @@
       <div v-for="(item,index) in reciteList" :key="index" @click="changeReciteType(item)" class="recite-wrap-top-unit">{{item}}{{reciteType===item?"("+subAverage+")":""}}</div>
       <div class="recite-wrap-top-unit" @click="changeNav">{{nav?"关闭":"打开"}}导航</div>
     </div>
-    <div class="recite-name">{{titleTips?info.title:info.tips}}</div>
+    <div class="recite-name"><span>{{info.theme}}</span>{{titleTips?info.title:info.tips}}</div>
     <div class="recite-wrap">
       <div class="recite-tabs">
         <div :class="type==='issue'?'recite-tabs-unit-active':'recite-tabs-unit'" @click="typeChange('issue')">题目</div>
         <div :class="type==='tips20'?'recite-tabs-unit-active':'recite-tabs-unit'" @click="typeChange('tips20')">提示20%</div>
         <div :class="type==='tips50'?'recite-tabs-unit-active':'recite-tabs-unit'" @click="typeChange('tips50')">提示50%</div>
+        <div :class="type==='tips100'?'recite-tabs-unit-active':'recite-tabs-unit'" @click="typeChange('tips100')">全部</div>
       </div>
       <div v-if="type==='issue'" class="recite-main">
 <!--        <div class="recite-main-title">{{titleTips?info.title:info.tips}}</div>-->
@@ -21,6 +22,9 @@
       </div>
       <div v-if="type==='tips50'" class="recite-main">
         <div class="recite-main-detail">{{showInfo(50)}}</div>
+      </div>
+      <div v-if="type==='tips100'" class="recite-main">
+        <div class="recite-main-detail">{{showInfo(100)}}</div>
       </div>
     </div>
     <div class="search-area">
@@ -46,7 +50,7 @@
       return {
         answer: "",
         type: "issue",
-        reciteList:["英文短语"],
+        reciteList:["英文短语","中文语句","名词中文解释"],
         reciteType:"英文短语",
         allAverage:0,
         subAverage:0,
@@ -78,12 +82,13 @@
       },
       getIssue(){
         queryByReciteType({reciteType:this.reciteType}).then(res=>{
-          this.info=res.data.unit;
+          this.info=res.data.unit?res.data.unit:{};
           this.answerRight=false
         })
       },
       changeReciteType(type){
-        this.reciteType=type
+        this.reciteType=type;
+        this.getAllAverage()
       },
       changeNav(){
         this.nav=!this.nav;
@@ -101,14 +106,19 @@
         let str="";
         let index=0;
         for (let i = 0; i < init.length; i++) {
-          if(init[i]===" "){
-            str+=" "
+          if(this.shouldOut(init[i])){
+            str+=init[i]
           }else {
             str+=index%parseInt(Math.floor(100/number))===0?init[i]:"_";
             index++
           }
         }
         return str
+      },
+      shouldOut(unit){
+        let reg = /[\u3002|\uff1f|\uff01|\uff0c|\u3001|\uff1b|\uff1a|\u201c|\u201d|\u2018|\u2019|\uff08|\uff09|\u300a|\u300b|\u3008|\u3009|\u3010|\u3011|\u300e|\u300f|\u300c|\u300d|\ufe43|\ufe44|\u3014|\u3015|\u2026|\u2014|\uff5e|\ufe4f|\uffe5]/;
+        let reg2= /[\ |\~|\`|\!|\@|\#|\$|\%|\^|\&|\*|\(|\)|\-|\_|\+|\=|\||\\|\[|\]|\{|\}|\;|\:|\"|\'|\,|\<|\.|\>|\/|\?]/;
+        return unit===" "||reg.test(unit)||reg2.test(unit)
       },
       checkAnswer(){
         let answer=this.answer;
@@ -197,6 +207,10 @@
     margin-bottom: 20px;
     color: white;
     height: 20px;
+  }
+  .recite-name span{
+    color:rgba(255,255,255,0.45);
+    margin-right: 30px;
   }
 
   .recite-wrap {
