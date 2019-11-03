@@ -1,40 +1,42 @@
 <template>
   <div class="main">
-    <NavBottom/>
-    <!--<div class="search-area">-->
-      <!--<input class="search-input" :placeholder="local?'搜索主题':'搜索名称'" v-model="searchInfo" v-on:keyup.enter="searchBaidu"/>-->
-      <!--<div class="search-button" @click="searchBaidu">搜索</div>-->
-      <!--<div :class="local?'search-button-local-active':'search-button-local'" @click="searchLocal">主题</div>-->
-    <!--</div>-->
-    <div class="recite-name">{{tempName}}</div>
+    <div class="recite-wrap-top">
+      <div class="recite-wrap-top-unit" @click="changeShow">题案交换</div>
+      <div class="recite-wrap-top-unit">全部({{allAverage}})</div>
+      <div v-for="(item,index) in reciteList" :key="index" @click="changeReciteType(item)" class="recite-wrap-top-unit">{{item}}{{reciteType===item?"("+subAverage+")":""}}</div>
+      <div class="recite-wrap-top-unit" @click="changeNav">{{nav?"关闭":"打开"}}导航</div>
+    </div>
+    <div class="recite-name">{{titleTips?info.title:info.tips}}</div>
     <div class="recite-wrap">
       <div class="recite-tabs">
         <div :class="type==='issue'?'recite-tabs-unit-active':'recite-tabs-unit'" @click="typeChange('issue')">题目</div>
-        <div :class="type==='tips'?'recite-tabs-unit-active':'recite-tabs-unit'" @click="typeChange('tips')">提示</div>
-        <!--<div :class="type==='sound'?'recite-tabs-unit-active':'recite-tabs-unit'" @click="typeChange('sound')">语音</div>-->
+        <div :class="type==='tips20'?'recite-tabs-unit-active':'recite-tabs-unit'" @click="typeChange('tips20')">提示20%</div>
+        <div :class="type==='tips50'?'recite-tabs-unit-active':'recite-tabs-unit'" @click="typeChange('tips50')">提示50%</div>
       </div>
       <div v-if="type==='issue'" class="recite-main">
-        <div>123</div>
+<!--        <div class="recite-main-title">{{titleTips?info.title:info.tips}}</div>-->
       </div>
-      <div v-if="type==='tips'" class="recite-main">
-        <div>222</div>
+      <div v-if="type==='tips20'" class="recite-main">
+        <div class="recite-main-detail">{{showInfo(20)}}</div>
       </div>
-      <!--<div v-if="type==='sound'" class="recite-main">-->
-        <!--<div>123</div>-->
-      <!--</div>-->
+      <div v-if="type==='tips50'" class="recite-main">
+        <div class="recite-main-detail">{{showInfo(50)}}</div>
+      </div>
     </div>
     <div class="search-area">
-      <input class="search-input" placeholder="输入答案" v-model="searchInfo" v-on:keyup.enter="searchBaidu"/>
-      <div class="search-button" @click="searchBaidu">跳过</div>
-      <div :class="local?'search-button-local-active':'search-button-local'" @click="searchLocal">下一题</div>
+      <input class="search-input" placeholder="输入答案" v-model="answer" v-on:keyup="checkAnswer"/>
+      <div class="search-button" @click="getIssue">跳过</div>
+      <div v-if="answerRight" class="search-button"  @click="getRight">下一题</div>
+      <div v-else class="search-button" ></div>
     </div>
+    <div v-show="answerRight" class="recite-name">{{titleTips?info.tips:info.title}}</div>
     <!--以上是链接部分-->
-    <NavBottom/>
+    <NavBottom v-show="nav"/>
   </div>
 </template>
 
 <script>
-  // import {reciteList,reciteEditInfo} from "../../api";
+  import {countByReciteType,queryByReciteType,reciteAdd} from "../../api";
   import NavBottom from "../../components/navBottom"
 
   export default {
@@ -42,112 +44,92 @@
     components: {NavBottom},
     data() {
       return {
-        urls: [],
-        reciteAddShow: false,
-        reciteEditShow: false,
-        reciteEditItem: {},
-        searchInfo: "",
-        tempName: "",
+        answer: "",
         type: "issue",
-        edit: false,
-        local: false
+        reciteList:["英文短语"],
+        reciteType:"英文短语",
+        allAverage:0,
+        subAverage:0,
+        nav:false,
+        info:{},
+        titleTips:false,
+        answerRight:false
+
       }
     },
     created() {
-      // this.getrecite()
+      this.getAllAverage()
     },
     methods: {
-      searchLocal() {
-        this.local = !this.local
+      getRight(){
+        reciteAdd({id:this.info._id}).then(()=>{
+          this.answer="";
+          this.getAllAverage()
+        })
       },
-      changeState() {
-        this.edit = !this.edit
+      getAllAverage(){
+        countByReciteType().then(res=>{
+          this.allAverage=res.data.average;
+        });
+        countByReciteType({reciteType:this.reciteType}).then(res=>{
+          this.subAverage=res.data.average;
+        });
+        this.getIssue()
+      },
+      getIssue(){
+        queryByReciteType({reciteType:this.reciteType}).then(res=>{
+          this.info=res.data.unit;
+          this.answerRight=false
+        })
+      },
+      changeReciteType(type){
+        this.reciteType=type
+      },
+      changeNav(){
+        this.nav=!this.nav;
+      },changeShow(){
+        this.titleTips=!this.titleTips;
       },
       typeChange(type) {
         if (type !== this.type) {
           this.type = type;
-          // this.getrecite()
         }
       },
-      searchreciteByTheme() {
-        let data = {};
-        data.size = 100;
-        data.theme = this.searchInfo;
-        reciteList(data).then(res => {
-          this.urls = res.data.list
-        })
-      },
-      searchrecite() {
-        let data = {};
-        data.size = 100;
-        data.search = this.searchInfo;
-        reciteList(data).then(res => {
-          this.urls = res.data.list
-        })
-      },
-      getrecite() {
-        if (this.local) {
-          this.searchrecite()
-        } else {
-          let data = {};
-          data.size = 40;
-          data.state=this.state;
-          reciteList(data).then(res => {
-            this.urls = res.data.list
-          })
-        }
-
-      },
-      reciteClick: function (item) {
-        if(this.edit){
-          this.reciteEditShow = true;
-          this.reciteEditItem = item;
-        } else {
-          if(this.state==="todo"){
-            console.log(item)
-            this.$confirm('撕掉便签'+item.name+'?', '提示', {
-              confirmButtonText: '确定',
-              cancelButtonText: '取消',
-            }).then(() => {
-              let data={};
-              data.id=item._id;
-              data.finishDate=new Date().valueOf()
-              reciteEditInfo(data).then(res=>{
-                this.getrecite()
-              })
-            }).catch(() => {
-
-            });
+      showInfo(number){
+        let init=this.titleTips?this.info.tips:this.info.title;
+        init=init?init:""
+        let str="";
+        let index=0;
+        for (let i = 0; i < init.length; i++) {
+          if(init[i]===" "){
+            str+=" "
+          }else {
+            str+=index%parseInt(Math.floor(100/number))===0?init[i]:"_";
+            index++
           }
         }
-
+        return str
       },
-      reciteHover(item) {
-        let str=item.name;
-        if(item.finishDate){
-          str+="/"+this.$moment(item.finishDate).format('YYYY-MM-DD h:mm')
+      checkAnswer(){
+        let answer=this.answer;
+        let test=this.titleTips?this.info.tips:this.info.title;
+        function strHandle(str){
+          function shouldOut(unit){
+            let reg = /[\u3002|\uff1f|\uff01|\uff0c|\u3001|\uff1b|\uff1a|\u201c|\u201d|\u2018|\u2019|\uff08|\uff09|\u300a|\u300b|\u3008|\u3009|\u3010|\u3011|\u300e|\u300f|\u300c|\u300d|\ufe43|\ufe44|\u3014|\u3015|\u2026|\u2014|\uff5e|\ufe4f|\uffe5]/;
+            let reg2= /[\ |\~|\`|\!|\@|\#|\$|\%|\^|\&|\*|\(|\)|\-|\_|\+|\=|\||\\|\[|\]|\{|\}|\;|\:|\"|\'|\,|\<|\.|\>|\/|\?]/;
+           return unit===" "||reg.test(unit)||reg2.test(unit)
+          }
+          let res="";
+          for (let i = 0; i < str.length; i++) {
+            if(!shouldOut(str[i])){
+              res+=str[i]
+            }
+          }
+          return res;
         }
-          str+="/"+this.$moment(item.deadline).format('YYYY-MM-DD h:mm')
-        this.tempName = str;
-      },
-      reciteHoverOut() {
-        this.tempName = ""
-      },
-      tapLink() {
-        this.reciteAddShow = !this.reciteAddShow;
-      },
-      tapLinkEdit() {
-        this.reciteEditShow = false;
-        this.reciteEditItem = {}
-      },
-      searchBaidu() {
-        if (!this.local) {
-          this.searchrecite()
-        } else {
-          this.searchreciteByTheme()
-        }
-
+        this.answerRight=strHandle(answer)===strHandle(test)
       }
+
     }
   }
 </script>
@@ -157,6 +139,29 @@
   .main {
     text-align: center;
     padding-top: 80px;
+  }
+  .recite-main-title{
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .recite-wrap-top{
+    width: 800px;
+    margin: 0 auto 30px auto;
+    display: flex;
+    justify-content: center;
+    align-items: start;
+    background: #e8ecf1;
+    padding: 20px;
+    border-radius: 15px;
+  }
+  .recite-wrap-top-unit{
+    margin: 0 10px;
+    color: #b5cfd8;
+    cursor: pointer;
+    text-decoration: none;
   }
 
   .recite-tabs {
@@ -183,6 +188,9 @@
   .recite-main {
     display: flex;
     flex-wrap: wrap;
+    flex: 1;
+    justify-content: center;
+    align-items: center;
   }
 
   .recite-name {
@@ -196,37 +204,12 @@
     margin: 0 auto 30px auto;
     display: flex;
     justify-content: flex-start;
-    align-items: start;
-
+    align-items: center;
     background: #e8ecf1;
     padding: 20px;
     border-radius: 15px;
   }
 
-  .recite-wrap-unit {
-    cursor: pointer;
-    flex: 10%;
-    flex-grow: 0;
-    position: relative;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 10px;
-
-  }
-
-  .recite-wrap-unit-logo {
-    width: 45px;
-    height: 45px;
-    border-radius: 50%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    background: #7393a7;
-    color: white;
-    font-size: 20px;
-    overflow: hidden;
-  }
 
 
   .recite-wrap-unit a {
@@ -253,17 +236,7 @@
 
   .search-button {
     cursor: pointer;
+    margin-right: 10px;
   }
 
-  .search-button-local {
-    cursor: pointer;
-    color: rgba(255, 255, 255, 0.2);
-    margin-left: 10px;
-  }
-
-  .search-button-local-active {
-    cursor: pointer;
-    color: black;
-    margin-left: 10px;
-  }
 </style>
