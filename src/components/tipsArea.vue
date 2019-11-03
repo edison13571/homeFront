@@ -72,7 +72,7 @@
         function inWorkTime(moment) {
           let day=moment.day();
           let hour=moment.hour();
-          return (day===6||day===7)||(hour<=18&&hour>=9)
+          return (day<6&&day>0)&&(hour<=17&&hour>=10)
         }
       },
       getRecent:function () {

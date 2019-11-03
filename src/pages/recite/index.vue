@@ -50,7 +50,7 @@
       return {
         answer: "",
         type: "issue",
-        reciteList:["英文短语","中文语句","名词中文解释"],
+        reciteList:["英文短语","英文单词","中文语句","名词中文解释"],
         reciteType:"英文短语",
         allAverage:0,
         subAverage:0,
