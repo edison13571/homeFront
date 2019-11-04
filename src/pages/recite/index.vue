@@ -13,30 +13,21 @@
         <div :class="type==='tips20'?'recite-tabs-unit-active':'recite-tabs-unit'" @click="typeChange('tips20')">提示20%</div>
         <div :class="type==='tips50'?'recite-tabs-unit-active':'recite-tabs-unit'" @click="typeChange('tips50')">提示50%</div>
         <div :class="type==='tips100'?'recite-tabs-unit-active':'recite-tabs-unit'" @click="typeChange('tips100')">全部</div>
-        <div :class="type==='voice'?'recite-tabs-unit-active':'recite-tabs-unit'" @click="typeChange('voice')">语音</div>
+        <!--<div :class="type==='voice'?'recite-tabs-unit-active':'recite-tabs-unit'" @click="typeChange('voice')">语音</div>-->
       </div>
-      <div v-if="type==='issue'" class="recite-main">
-<!--        <div class="recite-main-title">{{titleTips?info.title:info.tips}}</div>-->
-      </div>
-      <div v-if="type==='tips20'" class="recite-main">
-        <div class="recite-main-detail">{{showInfo(20)}}</div>
-      </div>
-      <div v-if="type==='tips50'" class="recite-main">
-        <div class="recite-main-detail">{{showInfo(50)}}</div>
-      </div>
-      <div v-if="type==='tips100'" class="recite-main">
-        <div class="recite-main-detail">{{showInfo(100)}}</div>
-      </div>
-      <div v-if="type==='voice'" class="recite-main">
-        <div class="recite-main-detail">
+      <div  class="recite-main">
+        <div class="recite-main-detail" v-if="type==='issue'"></div>
+        <div class="recite-main-detail" v-if="type==='tips20'">{{showInfo(20)}}</div>
+        <div class="recite-main-detail" v-if="type==='tips50'">{{showInfo(50)}}</div>
+        <div class="recite-main-detail" v-if="type==='tips100'">{{showInfo(100)}}</div>
           <audio :src="audio" controls></audio>
           <div class="recite-main-detail-spd">
             <div class="recite-main-detail-spd-label">速度</div>
             <input type="number" min="0" max="15" v-model="spd"/>
             <div class="recite-main-detail-spd-button" @click="getVoice">确定</div>
           </div>
-        </div>
       </div>
+
     </div>
     <div class="search-area">
       <input class="search-input" placeholder="输入答案" v-model="answer" v-on:keyup="checkAnswer"/>
@@ -60,8 +51,8 @@
     data() {
       return {
         answer: "",
-        type: "voice",
-        reciteList:["英文短语","英文单词","中文语句","名词中文解释"],
+        type: "issue",
+        reciteList:["英文短语","英文单词","中文语句","名词中文解释","数字"],
         reciteType:"英文短语",
         allAverage:0,
         subAverage:0,
@@ -220,6 +211,7 @@
     display: flex;
     flex-wrap: wrap;
     flex: 1;
+    flex-direction: column;
     justify-content: center;
     align-items: center;
   }
@@ -273,6 +265,9 @@
     cursor: pointer;
     margin-right: 10px;
   }
+  .recite-main-detail{
+    margin-bottom: 30px;
+  }
 
   audio{
     outline: none;
@@ -284,6 +279,7 @@
     align-items: center;
     color: #b5cfd8;
     font-size: 16px;
+
   }
   .recite-main-detail-spd input{
     width: 40px;
