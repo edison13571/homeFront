@@ -111,6 +111,32 @@ export function get(url,data){
   })
 }
 
+export function baiduGetVoice(url,data){
+  let headers = {'Content-Type': 'multipart/form-data'};
+  data.tok="24.6c3e42e2258b1da140401ed3b1bde610.2592000.1575430721.282335-17684060";
+  data.cuid="center";
+  data.ctp=1;
+  data.lan="zh";
+  data.aue=3;
+  let baiduUrl="https://tsn.baidu.com/text2audio";
+  return new Promise((resolve,reject) => {
+    axios.get(baiduUrl,{params:data,headers:headers,responseType:'arraybuffer'})
+    // axios.get(url,{params:data})
+      .then(response => {
+        let blob = new Blob([response.data],{type:"audio/mp3"});
+        let blobUrl = URL.createObjectURL(blob);
+        resolve(blobUrl);
+      },err => {
+        reject(err)
+      })
+  })
+}
+
+// 登录
+export function vioceGet(data) {
+  return baiduGetVoice('',data);
+}
+
 // 登录
 export function test(data) {
   return get('/api/users/test',data);

@@ -13,6 +13,7 @@
         <div :class="type==='tips20'?'recite-tabs-unit-active':'recite-tabs-unit'" @click="typeChange('tips20')">提示20%</div>
         <div :class="type==='tips50'?'recite-tabs-unit-active':'recite-tabs-unit'" @click="typeChange('tips50')">提示50%</div>
         <div :class="type==='tips100'?'recite-tabs-unit-active':'recite-tabs-unit'" @click="typeChange('tips100')">全部</div>
+        <div :class="type==='voice'?'recite-tabs-unit-active':'recite-tabs-unit'" @click="typeChange('voice')">语音</div>
       </div>
       <div v-if="type==='issue'" class="recite-main">
 <!--        <div class="recite-main-title">{{titleTips?info.title:info.tips}}</div>-->
@@ -25,6 +26,16 @@
       </div>
       <div v-if="type==='tips100'" class="recite-main">
         <div class="recite-main-detail">{{showInfo(100)}}</div>
+      </div>
+      <div v-if="type==='voice'" class="recite-main">
+        <div class="recite-main-detail">
+          <audio :src="audio" controls></audio>
+          <div class="recite-main-detail-spd">
+            <div class="recite-main-detail-spd-label">速度</div>
+            <input type="number" min="0" max="15" v-model="spd"/>
+            <div class="recite-main-detail-spd-button" @click="getVoice">确定</div>
+          </div>
+        </div>
       </div>
     </div>
     <div class="search-area">
@@ -40,7 +51,7 @@
 </template>
 
 <script>
-  import {countByReciteType,queryByReciteType,reciteAdd} from "../../api";
+  import {countByReciteType,queryByReciteType,reciteAdd,vioceGet} from "../../api";
   import NavBottom from "../../components/navBottom"
 
   export default {
@@ -49,7 +60,7 @@
     data() {
       return {
         answer: "",
-        type: "issue",
+        type: "voice",
         reciteList:["英文短语","英文单词","中文语句","名词中文解释"],
         reciteType:"英文短语",
         allAverage:0,
@@ -57,7 +68,9 @@
         nav:false,
         info:{},
         titleTips:false,
-        answerRight:false
+        answerRight:false,
+        audio:"",
+        spd:4
 
       }
     },
@@ -83,7 +96,14 @@
       getIssue(){
         queryByReciteType({reciteType:this.reciteType}).then(res=>{
           this.info=res.data.unit?res.data.unit:{};
-          this.answerRight=false
+          this.answerRight=false;
+          this.getVoice()
+        })
+      },
+      getVoice(){
+        let text=this.titleTips?this.info.tips:this.info.title;
+        vioceGet({tex:text,spd:this.spd}).then(res=>{
+          this.audio=res;
         })
       },
       changeReciteType(type){
@@ -94,6 +114,7 @@
         this.nav=!this.nav;
       },changeShow(){
         this.titleTips=!this.titleTips;
+        this.getVoice()
       },
       typeChange(type) {
         if (type !== this.type) {
@@ -102,7 +123,7 @@
       },
       showInfo(number){
         let init=this.titleTips?this.info.tips:this.info.title;
-        init=init?init:""
+        init=init?init:"";
         let str="";
         let index=0;
         for (let i = 0; i < init.length; i++) {
@@ -253,4 +274,24 @@
     margin-right: 10px;
   }
 
+  audio{
+    outline: none;
+    margin-bottom: 10px;
+  }
+  .recite-main-detail-spd{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: #b5cfd8;
+    font-size: 16px;
+  }
+  .recite-main-detail-spd input{
+    width: 40px;
+    font-size: 16px;
+    text-align: center;
+    color: #b5cfd8;
+  }
+  .recite-main-detail-spd-button{
+    cursor: pointer;
+  }
 </style>
