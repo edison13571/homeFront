@@ -61,8 +61,8 @@
         titleTips:false,
         answerRight:false,
         audio:"",
-        spd:4
-
+        spd:4,
+        cache:[]
       }
     },
     created() {
@@ -93,9 +93,16 @@
       },
       getVoice(){
         let text=this.titleTips?this.info.tips:this.info.title;
-        vioceGet({tex:text,spd:this.spd}).then(res=>{
-          this.audio=res;
-        })
+        let arr=this.cache;
+        arr=arr.filter(item=>item.text===text);
+        if(arr.length>0){
+          this.audio=arr[0].audio;
+        } else {
+          vioceGet({tex:text,spd:this.spd}).then(res=>{
+            this.audio=res;
+            this.cache.push({text:text,audio:res})
+          })
+        }
       },
       changeReciteType(type){
         this.reciteType=type;
