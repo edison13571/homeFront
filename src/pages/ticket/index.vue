@@ -13,6 +13,7 @@
         <div :class="type==='其他'?'tickets-tabs-unit-active':'tickets-tabs-unit'" @click="typeChange('其他')">其他</div>
         <div :class="ticketsAddShow?'tickets-tabs-unit-active':'tickets-tabs-unit'" @click="tapLink">新增</div>
         <div :class="edit?'tickets-tabs-unit-active':'tickets-tabs-unit'" @click="changeState">{{edit?'关闭':'编辑'}}</div>
+        <div :class="addRecord?'tickets-tabs-unit-active':'tickets-tabs-unit'" @click="changeStateRecord">记录</div>
       </div>
       <div class="tickets-main">
         <div class="tickets-wrap-unit" v-for="(item,index) in urls" :key="index" @click="ticketsClick(item)"
@@ -23,6 +24,7 @@
     </div>
     <ticketsAdd v-if="ticketsAddShow" @close="tapLink" @finish="gettickets"/>
     <ticketsEdit v-if="ticketsEditShow" @close="tapLinkEdit" @finish="gettickets" :info="ticketsEditItem"/>
+    <ticketsRecord v-if="ticketsRecordShow" @close="tapLinkEdit" @finish="gettickets" :info="ticketsEditItem"/>
     <!--以上是链接部分-->
     <NavBottom/>
   </div>
@@ -32,21 +34,24 @@
   import {ticketsList} from "../../api";
   import ticketsAdd from "./ticketsAdd"
   import ticketsEdit from "./ticketsEdit"
+  import ticketsRecord from "./ticketsRecord"
   import NavBottom from "../../components/navBottom"
 
   export default {
     name: 'Main',
-    components: {ticketsAdd, ticketsEdit,NavBottom},
+    components: {ticketsAdd, ticketsEdit,ticketsRecord,NavBottom},
     data() {
       return {
         urls: [],
         ticketsAddShow: false,
         ticketsEditShow: false,
+        ticketsRecordShow: false,
         ticketsEditItem: {},
         searchInfo: "",
         tempName: "",
         type: "电影",
         edit: false,
+        addRecord: false,
         local: false
       }
     },
@@ -59,6 +64,9 @@
       },
       changeState() {
         this.edit = !this.edit
+      },
+      changeStateRecord(){
+        this.addRecord=!this.addRecord;
       },
       typeChange(type) {
         if (type !== this.type) {
@@ -99,6 +107,9 @@
         if(this.edit){
           this.ticketsEditShow = true;
           this.ticketsEditItem = item;
+        } else if(this.addRecord){
+          this.ticketsRecordShow = true;
+          this.ticketsEditItem = item;
         } else {
           if(item.url&&item.url!=="none"){
             window.open(item.url)
@@ -117,6 +128,7 @@
       },
       tapLinkEdit() {
         this.ticketsEditShow = false;
+        this.ticketsRecordShow = false;
         this.ticketsEditItem = {}
       },
       searchBaidu() {
