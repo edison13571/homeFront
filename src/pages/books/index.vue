@@ -12,7 +12,8 @@
         <div :class="type==='看过'?'books-tabs-unit-active':'books-tabs-unit'" @click="typeChange('看过')">看过</div>
         <div :class="type==='想看'?'books-tabs-unit-active':'books-tabs-unit'" @click="typeChange('想看')">想看</div>
         <div :class="booksAddShow?'books-tabs-unit-active':'books-tabs-unit'" @click="tapLink">新增</div>
-        <div :class="edit?'books-tabs-unit-active':'books-tabs-unit'" @click="changeState">{{edit?'关闭':'编辑'}}</div>
+        <div :class="edit?'books-tabs-unit-active':'books-tabs-unit'" @click="changeState">编辑</div>
+        <div :class="addRecord?'books-tabs-unit-active':'books-tabs-unit'" @click="changeStateRecord">记录</div>
       </div>
       <div class="books-main">
         <div class="books-wrap-unit" v-for="(item,index) in urls" :key="index" @click="booksClick(item)"
@@ -23,6 +24,7 @@
     </div>
     <booksAdd v-if="booksAddShow" @close="tapLink" @finish="getbooks"/>
     <booksEdit v-if="booksEditShow" @close="tapLinkEdit" @finish="getbooks" :info="booksEditItem"/>
+    <booksRecord v-if="booksRecordShow" @close="tapLinkEdit" @finish="getbooks" :info="booksEditItem"/>
     <!--以上是链接部分-->
     <NavBottom/>
   </div>
@@ -32,22 +34,25 @@
   import {booksList} from "../../api";
   import booksAdd from "./booksAdd"
   import booksEdit from "./booksEdit"
+  import booksRecord from "./booksRecord"
   import NavBottom from "../../components/navBottom"
 
   export default {
     name: 'Main',
-    components: {booksAdd, booksEdit,NavBottom},
+    components: {booksAdd, booksEdit,booksRecord,NavBottom},
     data() {
       return {
         urls: [],
         booksAddShow: false,
         booksEditShow: false,
+        booksRecordShow: false,
         booksEditItem: {},
         searchInfo: "",
         tempName: "",
         type: "在看",
         edit: false,
-        local: false
+        local: false,
+        addRecord: false
       }
     },
     created() {
@@ -59,6 +64,11 @@
       },
       changeState() {
         this.edit = !this.edit
+        this.addRecord = false;
+      },
+      changeStateRecord(){
+        this.addRecord=!this.addRecord;
+        this.edit=false;
       },
       typeChange(type) {
         if (type !== this.type) {
@@ -99,7 +109,10 @@
         if(this.edit){
           this.booksEditShow = true;
           this.booksEditItem = item;
-        } else {
+        } else if(this.addRecord){
+          this.booksRecordShow = true;
+          this.booksEditItem = item;
+        }else {
           if(item.url&&item.url!=="none"){
             window.open(item.url)
           }
@@ -117,6 +130,7 @@
       },
       tapLinkEdit() {
         this.booksEditShow = false;
+        this.booksRecordShow = false;
         this.booksEditItem = {}
       },
       searchBaidu() {

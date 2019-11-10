@@ -12,7 +12,7 @@
         <div :class="type==='电视'?'tickets-tabs-unit-active':'tickets-tabs-unit'" @click="typeChange('电视')">电视</div>
         <div :class="type==='其他'?'tickets-tabs-unit-active':'tickets-tabs-unit'" @click="typeChange('其他')">其他</div>
         <div :class="ticketsAddShow?'tickets-tabs-unit-active':'tickets-tabs-unit'" @click="tapLink">新增</div>
-        <div :class="edit?'tickets-tabs-unit-active':'tickets-tabs-unit'" @click="changeState">{{edit?'关闭':'编辑'}}</div>
+        <div :class="edit?'tickets-tabs-unit-active':'tickets-tabs-unit'" @click="changeState">编辑</div>
         <div :class="addRecord?'tickets-tabs-unit-active':'tickets-tabs-unit'" @click="changeStateRecord">记录</div>
       </div>
       <div class="tickets-main">
@@ -63,10 +63,12 @@
         this.local = !this.local
       },
       changeState() {
-        this.edit = !this.edit
+        this.edit = !this.edit;
+        this.addRecord = false;
       },
       changeStateRecord(){
         this.addRecord=!this.addRecord;
+        this.edit=false;
       },
       typeChange(type) {
         if (type !== this.type) {

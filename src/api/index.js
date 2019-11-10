@@ -2,7 +2,7 @@ import axios from 'axios';
 import qs from 'qs';
 
 
-// axios.defaults.baseURL = "http://192.168.1.15:3000/";
+// axios.defaults.baseURL = "http://192.168.1.9:3000/";
 axios.defaults.baseURL = "http://129.211.51.250:3000/";
 axios.defaults.timeout = 5000;
 // const FDFSURL=process.env.FDFS_ENDPOINT;
@@ -16,6 +16,9 @@ axios.defaults.timeout = 5000;
 
 axios.interceptors.response.use(function (response) {
   // 对响应数据做点什么
+if(response.data.error){
+  alert(response.data.msg)
+}
   return response;
 }, function (error) {
   console.log(error);
