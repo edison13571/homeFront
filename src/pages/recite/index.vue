@@ -74,6 +74,7 @@
       getRight(){
         reciteAdd({id:this.info._id}).then(()=>{
           this.answer="";
+          this.type="issue";
           this.getAllAverage()
         })
       },
@@ -90,6 +91,7 @@
         queryByReciteType({reciteType:this.reciteType}).then(res=>{
           this.info=res.data.unit?res.data.unit:{};
           this.answerRight=false;
+          this.type="issue";
           this.getVoice()
         })
       },
