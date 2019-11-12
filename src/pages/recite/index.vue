@@ -9,14 +9,16 @@
     <div class="recite-name"><span>{{info.theme}}</span>{{titleTips?info.title:info.tips}}</div>
     <div class="recite-wrap">
       <div class="recite-tabs">
-        <div :class="type==='issue'?'recite-tabs-unit-active':'recite-tabs-unit'" @click="typeChange('issue')">题目</div>
+        <div :class="type==='issue'?'recite-tabs-unit-active':'recite-tabs-unit'" @click="typeChange('issue')">默认</div>
         <div :class="type==='tips20'?'recite-tabs-unit-active':'recite-tabs-unit'" @click="typeChange('tips20')">提示20%</div>
         <div :class="type==='tips50'?'recite-tabs-unit-active':'recite-tabs-unit'" @click="typeChange('tips50')">提示50%</div>
         <div :class="type==='tips100'?'recite-tabs-unit-active':'recite-tabs-unit'" @click="typeChange('tips100')">全部</div>
         <!--<div :class="type==='voice'?'recite-tabs-unit-active':'recite-tabs-unit'" @click="typeChange('voice')">语音</div>-->
       </div>
       <div  class="recite-main">
-        <div class="recite-main-detail" v-if="type==='issue'"></div>
+        <div class="recite-main-detail" v-if="type==='issue'">
+          {{showInfoByTimes()}}
+        </div>
         <div class="recite-main-detail" v-if="type==='tips20'">{{showInfo(20)}}</div>
         <div class="recite-main-detail" v-if="type==='tips50'">{{showInfo(50)}}</div>
         <div class="recite-main-detail" v-if="type==='tips100'">{{showInfo(100)}}</div>
@@ -133,6 +135,19 @@
           }
         }
         return str
+      },
+      showInfoByTimes(){
+        let times=this.info.finishTimes;
+        let init=this.titleTips?this.info.tips:this.info.title;
+        if(times<=3){
+          return init;
+        } else if(times<=6){
+          return this.showInfo(50)
+        } else if(times<=9){
+          return this.showInfo(20)
+        }
+        return ""
+
       },
       shouldOut(unit){
         let reg = /[\u3002|\uff1f|\uff01|\uff0c|\u3001|\uff1b|\uff1a|\u201c|\u201d|\u2018|\u2019|\uff08|\uff09|\u300a|\u300b|\u3008|\u3009|\u3010|\u3011|\u300e|\u300f|\u300c|\u300d|\ufe43|\ufe44|\u3014|\u3015|\u2026|\u2014|\uff5e|\ufe4f|\uffe5]/;
