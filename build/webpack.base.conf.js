@@ -25,6 +25,11 @@ module.exports = {
   externals: {
     moment:"moment",
     vue:"Vue",
+    lodash : {
+      commonjs: "lodash",
+      amd: "lodash",
+      root: "_" // indicates global variable
+    }
   },
   resolve: {
     extensions: ['.js', '.vue', '.json'],

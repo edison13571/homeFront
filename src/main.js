@@ -4,9 +4,11 @@ import Vue from 'vue'
 import App from './App'
 import router from './router'
 import moment from 'moment';
+import _ from 'lodash';
 
 Vue.config.productionTip = false;
 Vue.prototype.$moment=moment;
+Vue.prototype.$_=_;
 moment.locale('zh-cn')
 
 /* eslint-disable no-new */

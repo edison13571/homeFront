@@ -12,6 +12,7 @@
         <div :class="state===1?'habits-tabs-unit-active':'habits-tabs-unit'" @click="typeChange(1)">未激活</div>
         <div :class="habitsAddShow?'habits-tabs-unit-active':'habits-tabs-unit'" @click="tapLink">新增</div>
         <div :class="edit?'habits-tabs-unit-active':'habits-tabs-unit'" @click="changeState">{{edit?'关闭':'编辑'}}</div>
+        <div :class="stats?'habits-tabs-unit-active':'habits-tabs-unit'" @click="changeStateStats">{{stats?'关闭':'统计'}}</div>
       </div>
       <div class="habits-main">
         <div class="habits-wrap-unit" v-for="(item,index) in urls" :key="index" @click="habitsClick(item)"
@@ -22,10 +23,11 @@
     </div>
     <habitsAdd v-if="habitsAddShow" @close="tapLink" @finish="gethabits"/>
     <habitsEdit v-if="habitsEditShow" @close="tapLinkEdit" @finish="gethabits" :info="habitsEditItem"/>
+    <habitsStats v-if="statsShow" @close="tapLinkEdit" :info="habitsEditItem"/>
     <el-dialog
       title="添加记录"
       :visible.sync="recordsShow"
-      width="30%">
+      width="50%">
       <div>
         <div class="habits-add-unit">
           <div class="habits-add-unit-label">完成时间</div>
@@ -59,24 +61,27 @@
 <script>
   import {habitsList,habitsAddRecord} from "../../api";
   import habitsAdd from "./habitsAdd"
+  import habitsStats from "./habitsStats"
   import habitsEdit from "./habitsEdit"
   import NavBottom from "../../components/navBottom"
 
   export default {
     name: 'Main',
-    components: {habitsAdd, habitsEdit,NavBottom},
+    components: {habitsAdd, habitsEdit,habitsStats,NavBottom},
     data() {
       return {
         urls: [],
         habitsAddShow: false,
         habitsEditShow: false,
         recordsShow:false,
+        statsShow:false,
         habitsEditItem: {},
         searchInfo: "",
         tempName: "",
         state: 2,
         edit: false,
         local: false,
+        stats:false,
         finishDate:new Date().valueOf(),
         finish:0,
         pickerOptions: {
@@ -94,7 +99,12 @@
         this.local = !this.local
       },
       changeState() {
-        this.edit = !this.edit
+        this.edit = !this.edit;
+        this.stats=false;
+      },
+      changeStateStats() {
+        this.stats = !this.stats;
+        this.edit=false;
       },
       typeChange(state) {
         if (state !== this.state) {
@@ -135,7 +145,9 @@
         this.habitsEditItem = item;
         if(this.edit){
           this.habitsEditShow = true;
-        } else {
+        } else if(this.stats){
+          this.statsShow = true;
+        }else{
           this.recordsShow = true;
         }
 
@@ -175,6 +187,7 @@
       },
       tapLinkEdit() {
         this.habitsEditShow = false;
+        this.statsShow = false;
         this.habitsEditItem = {}
       },
       searchBaidu() {
