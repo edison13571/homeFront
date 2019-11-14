@@ -44,7 +44,7 @@
 </template>
 
 <script>
-  import {countByReciteType,queryByReciteType,reciteAdd,vioceGet} from "../../api";
+  import {countByReciteType,queryByReciteType,reciteAdd,vioceGet,youdaoVoice,baseURL} from "../../api";
   import NavBottom from "../../components/navBottom"
 
   export default {
@@ -54,7 +54,7 @@
       return {
         answer: "",
         type: "issue",
-        reciteList:["英文短语","英文单词","中文语句","名词中文解释","数字"],
+        reciteList:["英文短语","英文单词","中文语句","名词中文解释","数字","日文单词"],
         reciteType:"英文短语",
         allAverage:0,
         subAverage:0,
@@ -69,6 +69,7 @@
     },
     created() {
       this.getAllAverage()
+      console.log(baseURL)
     },
     methods: {
       getRight(){
@@ -102,11 +103,27 @@
         if(arr.length>0){
           this.audio=arr[0].audio;
         } else {
-          vioceGet({tex:text,spd:this.spd}).then(res=>{
-            this.audio=res;
-            this.cache.push({text:text,audio:res})
-          })
+          let flag=this.reciteType.indexOf("日语")>-1||this.reciteType.indexOf("日文")>-1
+          if(flag){
+            this.getVoiceYouDao(text)
+          }else {
+            this.getVoiceBaidu(text)
+          }
+
         }
+      },
+      getVoiceYouDao(text){
+        youdaoVoice({text:text,langType:"ja"}).then(res=>{
+          let location=baseURL+res.data;
+          this.audio=location;
+          this.cache.push({text:text,audio:location})
+        })
+      },
+      getVoiceBaidu(text){
+        vioceGet({tex:text,spd:this.spd}).then(res=>{
+          this.audio=res;
+          this.cache.push({text:text,audio:res})
+        })
       },
       changeReciteType(type){
         this.reciteType=type;
@@ -199,6 +216,7 @@
     display: flex;
     justify-content: center;
     align-items: start;
+    flex-wrap: wrap;
     background: #e8ecf1;
     padding: 20px;
     border-radius: 15px;
