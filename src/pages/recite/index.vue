@@ -54,7 +54,7 @@
       return {
         answer: "",
         type: "issue",
-        reciteList:["英文短语","英文单词","中文语句","名词中文解释","数字","日文单词"],
+        reciteList:["英文短语","英文单词","中文语句","名词中文解释","数字","日文单词","日语五十音"],
         reciteType:"英文短语",
         allAverage:0,
         subAverage:0,
