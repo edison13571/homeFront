@@ -103,7 +103,7 @@
         if(arr.length>0){
           this.audio=arr[0].audio;
         } else {
-          let flag=this.reciteType.indexOf("日语")>-1||this.reciteType.indexOf("日文")>-1
+          let flag=!this.titleTips&&(this.reciteType.indexOf("日语")>-1||this.reciteType.indexOf("日文")>-1)
           if(flag){
             this.getVoiceYouDao(text)
           }else {
@@ -145,6 +145,9 @@
         init=init?init:"";
         let str="";
         let index=0;
+        if(init.length<2){
+          return ""
+        }
         for (let i = 0; i < init.length; i++) {
           if(this.shouldOut(init[i])){
             str+=init[i]
