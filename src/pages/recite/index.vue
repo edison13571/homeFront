@@ -161,11 +161,11 @@
       showInfoByTimes(){
         let times=this.info.finishTimes;
         let init=this.titleTips?this.info.tips:this.info.title;
-        if(times<=3){
+        if(times<3){
           return init;
-        } else if(times<=6){
+        } else if(times<6){
           return this.showInfo(50)
-        } else if(times<=9){
+        } else if(times<9){
           return this.showInfo(20)
         }
         return ""
