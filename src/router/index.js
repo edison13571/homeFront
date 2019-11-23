@@ -9,6 +9,7 @@ import MemoryDate from '@/pages/memoryDate'
 import Note from '@/pages/note'
 import Habits from '@/pages/habits'
 import Recite from '@/pages/recite'
+import IssueAddPage from '@/pages/issue/add'
 
 Vue.use(Router)
 
@@ -16,7 +17,7 @@ export default new Router({
   routes: [
     {
       path: '/',
-      name: 'index',
+      name: 'add.vue',
       component: Index
     },
     {
@@ -58,6 +59,11 @@ export default new Router({
       path: '/recite',
       name: 'recite',
       component: Recite
+    },
+    {
+      path: '/issueAddPage',
+      name: 'issueAddPage',
+      component: IssueAddPage
     }
   ]
 })

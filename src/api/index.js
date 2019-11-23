@@ -2,7 +2,7 @@ import axios from 'axios';
 import qs from 'qs';
 
 
-// axios.defaults.baseURL = "http://192.168.1.170:3000/";
+// axios.defaults.baseURL = "http://192.168.1.13:3000/";
 axios.defaults.baseURL = "http://129.211.51.250:3000/";
 
 export let baseURL=axios.defaults.baseURL;
@@ -179,6 +179,14 @@ export function issueFinish(data) {
 
 export function issueAdd(data) {
   return post('/api/issues/add',data);
+}
+
+export function issueAllReciteType(data) {
+  return get('/api/issues/allReciteType',data);
+}
+
+export function issueAllTheme(data) {
+  return get('/api/issues/allTheme',data);
 }
 
 export function issueEdit(data) {
