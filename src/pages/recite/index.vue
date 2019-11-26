@@ -44,7 +44,7 @@
 </template>
 
 <script>
-  import {countByReciteType,queryByReciteType,reciteAdd,vioceGet,youdaoVoice,baseURL} from "../../api";
+  import {countByReciteType,queryByReciteType,reciteAdd,vioceGet,youdaoVoice,baseURL,issueAllReciteType} from "../../api";
   import NavBottom from "../../components/navBottom"
 
   export default {
@@ -68,10 +68,17 @@
       }
     },
     created() {
-      this.getAllAverage()
-      console.log(baseURL)
+      this.getAllAverage();
+      this.getReciteType()
     },
     methods: {
+      getReciteType(){
+        issueAllReciteType({type:"recall"}).then(res=>{
+          let arr=res.data;
+          arr=arr.filter(item=>item!=="none")
+          this.reciteList=arr
+        })
+      },
       getRight(){
         reciteAdd({id:this.info._id}).then(()=>{
           this.answer="";
