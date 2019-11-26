@@ -70,7 +70,7 @@ export function dateList() {
     lastWeek:lastWeek.format("YYYY-WW"),
     thisWeekDate:thisWeekDate,
     lastWeekDate:lastWeekDate,
-    thisMonth:thisWeek.format("YYYY-MM"),
+    thisMonth:Moment().format("YYYY-MM"),
     lastMonth:lastMonth.format("YYYY-MM"),
   }
 }
