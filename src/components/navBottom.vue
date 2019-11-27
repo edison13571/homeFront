@@ -8,6 +8,7 @@
     <router-link to="book" class="nav-wrap-unit">书柜</router-link>
     <router-link to="memoryDate" class="nav-wrap-unit">纪念</router-link>
     <router-link to="issueAddPage" class="nav-wrap-unit">填鸭</router-link>
+    <router-link to="stats" class="nav-wrap-unit">统计</router-link>
   </div>
 </template>
 

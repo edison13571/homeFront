@@ -10,6 +10,7 @@ import Note from '@/pages/note'
 import Habits from '@/pages/habits'
 import Recite from '@/pages/recite'
 import IssueAddPage from '@/pages/issue/add'
+import StatsIndex from '@/pages/stats'
 
 Vue.use(Router)
 
@@ -64,6 +65,11 @@ export default new Router({
       path: '/issueAddPage',
       name: 'issueAddPage',
       component: IssueAddPage
+    },
+    {
+      path: '/stats',
+      name: 'stats',
+      component: StatsIndex
     }
   ]
 })

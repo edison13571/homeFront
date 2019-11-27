@@ -233,6 +233,14 @@ export function ticketsEditInfo(data) {
   return post('/api/tickets/update',data);
 }
 
+export function ticketsStats(data) {
+  return get('/api/tickets/stats',data);
+}
+
+export function booksStats(data) {
+  return get('/api/books/stats',data);
+}
+
 export function booksList(data) {
   return get('/api/books/query',data);
 }
