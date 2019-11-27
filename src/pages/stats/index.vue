@@ -14,7 +14,7 @@
 </template>
 
 <script>
-  import {booksStats,ticketsStats} from "../../api"
+  import {booksStats,ticketsStats,issuesStats} from "../../api"
   import {createTimeSeries,dateList} from "../../utils/timeSeries"
   import NavBottom from "../../components/navBottom"
     export default {
@@ -29,8 +29,14 @@
       mounted(){
           this.getBooks();
           this.getMovie();
+          // this.getIssues();
       },
       methods:{
+          getIssues(){
+            issuesStats({}).then(res=>{
+              console.log(res)
+            })
+          },
           getBooks(){
             booksStats({type:"看过"}).then(res=>{
               let arr=res.data.list;
