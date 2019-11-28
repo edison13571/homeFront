@@ -1,6 +1,17 @@
 <template>
   <div class="main">
-
+    <div class="links-wrap">
+      <div>记忆 总数：{{RecallDate}}</div>
+      <div id="mainRecallDate" style="width: 800px;height:300px;"></div>
+    </div>
+    <div class="links-wrap">
+      <div>练习 总数：{{IssueDate}}</div>
+      <div id="mainIssueDate" style="width: 800px;height:300px;"></div>
+    </div>
+    <div class="links-wrap">
+      <div>创建 总数：{{CreateNumber}}</div>
+      <div id="mainCreateNumber" style="width: 800px;height:300px;"></div>
+    </div>
     <div class="links-wrap">
       <div>阅读 总数：{{Books}}</div>
       <div id="mainBooks" style="width: 800px;height:300px;"></div>
@@ -23,18 +34,27 @@
       data(){
           return{
             Books:0,
-            Movie:0
+            Movie:0,
+            IssueDate:0,
+            RecallDate:0,
+            CreateNumber:0
           }
       },
       mounted(){
           this.getBooks();
           this.getMovie();
-          // this.getIssues();
+          this.getIssues();
       },
       methods:{
           getIssues(){
-            issuesStats({}).then(res=>{
-              console.log(res)
+            issuesStats({type:"recall"}).then(res=>{
+              let arr=res.data.list;
+              this.showChartDate(arr,"IssueDate","reciteRecords")
+              this.showChartDate(arr,"RecallDate","recallRecords")
+              let objData=this.dateCal(arr)
+              this.showChartDate(arr,"CreateNumber","CreateNumber",objData)
+              // let data=this.issueCal(arr);
+              // console.log(data)
             })
           },
           getBooks(){
@@ -48,6 +68,27 @@
             let arr=res.data.list;
             this.showChart(arr,"Movie")
           })
+        },
+        issueCal(arr,name){
+          let now=this.$moment();
+          let start=now.startOf('month').valueOf();
+          let end=now.endOf('month').valueOf();
+          let finArr=[];
+          arr.map(item=>{
+            if(item[name]&&item[name].length>0){
+              item[name].map(unit=>{
+                let timestamp=parseInt(unit);
+                if(timestamp>=start&&timestamp<=end){
+                  finArr.push({timestamp:timestamp,name:item.reciteType})
+                }
+
+              })
+            }
+
+          });
+          let obj=createTimeSeries(finArr,"timestamp");
+          let day=obj.groupByDate();
+          return day.map
         },
         monthCal(arr){
             let now=this.$moment();
@@ -66,6 +107,65 @@
           let obj=createTimeSeries(finArr,"timestamp");
           let month=obj.groupByMonth();
           return month.map
+        },
+        dateCal(arr){
+          let now=this.$moment();
+          let start=now.startOf('month').valueOf();
+          let end=now.endOf('month').valueOf();
+          let finArr=[];
+          console.log(start,end)
+          arr.map(item=>{
+            let timestamp=item.createdDate
+            if(timestamp>=start&&timestamp<=end){
+              finArr.push({timestamp:timestamp,name:item.title})
+            }
+          })
+          let obj=createTimeSeries(finArr,"timestamp");
+          let day=obj.groupByDate();
+          console.log(finArr)
+          return day.map
+        },
+        showChartDate(arr,name,key,objData){
+          let myChart = echarts.init(document.getElementById('main'+name));
+          let obj=objData?objData:this.issueCal(arr,key);
+          let now=this.$moment().format("YYYY-MM");
+          let fin=[];
+          let xData=[];
+          let total=0;
+          let end=this.$moment().endOf('month').get('date');
+          for(let i=1;i<=end;i++){
+            xData.push(i)
+            let number=i<10?"0"+i:""+i;
+            let key=now+"-"+number;
+            if(obj[key]){
+              total+=obj[key].length
+            }
+            fin.push(obj[key]?obj[key].length:0)
+          }
+          this[name]=total;
+
+
+          // let lastWeek=this.dayForLastWeek.map(item=>item.number)
+          // 指定图表的配置项和数据
+          let option = {
+            tooltip: {},
+            legend: {
+              data:['本月']
+            },
+            xAxis: {
+              data: xData
+            },
+            yAxis: {},
+            series: [{
+              name: '本月',
+              type: 'bar',
+              data: fin
+            }],
+            color: ['#B2DFEE','#F4A460']
+          };
+
+          // 使用刚指定的配置项和数据显示图表。
+          myChart.setOption(option);
         },
         showChart(arr,name){
           let myChart = echarts.init(document.getElementById('main'+name));

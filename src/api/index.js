@@ -2,11 +2,11 @@ import axios from 'axios';
 import qs from 'qs';
 
 
-// axios.defaults.baseURL = "http://192.168.1.13:3000/";
+// axios.defaults.baseURL = "http://192.168.1.171:3000/";
 axios.defaults.baseURL = "http://129.211.51.250:3000/";
 
 export let baseURL=axios.defaults.baseURL;
-axios.defaults.timeout = 5000;
+axios.defaults.timeout = 10000;
 // const FDFSURL=process.env.FDFS_ENDPOINT;
 /** d
  * 封装post请求
