@@ -74,7 +74,7 @@
             })
           },
         getMovie(){
-          ticketsStats({}).then(res=>{
+          ticketsStats({type:"电影"}).then(res=>{
             let arr=res.data.list;
             this.showChart(arr,"Movie")
           })
