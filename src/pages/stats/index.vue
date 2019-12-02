@@ -49,7 +49,7 @@
       },
       methods:{
           dayAvg(total){
-            let endDate=this.$moment().endOf('month').get('date');
+            let endDate=this.$moment().get('date');
             return total>0?Math.floor(total/endDate):0
           },
         monthAvg(total){
@@ -131,7 +131,6 @@
           })
           let obj=createTimeSeries(finArr,"timestamp");
           let day=obj.groupByDate();
-          console.log(finArr)
           return day.map
         },
         showChartDate(arr,name,key,objData){
@@ -143,16 +142,20 @@
           let avg=[];
           let total=0;
           let end=this.$moment().endOf('month').get('date');
+          let nowDate=this.$moment().get("date");
           for(let i=1;i<=end;i++){
             xData.push(i)
-            let number=i<10?"0"+i:""+i;
-            let key=now+"-"+number;
-            let num=obj[key]?obj[key].length:0
-            if(obj[key]){
-              total+=obj[key].length
+            if(i<=nowDate){
+              let number=i<10?"0"+i:""+i;
+              let key=now+"-"+number;
+              let num=obj[key]?obj[key].length:0
+              if(obj[key]){
+                total+=obj[key].length
+              }
+              fin.push(num);
+              avg.push((total/i).toFixed(2))
             }
-            fin.push(num);
-            avg.push((total/i).toFixed(2))
+
           }
           this[name]=total;
 
