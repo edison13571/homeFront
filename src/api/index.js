@@ -2,11 +2,11 @@ import axios from 'axios';
 import qs from 'qs';
 
 
-// axios.defaults.baseURL = "http://192.168.1.13:3000/";
+// axios.defaults.baseURL = "http://192.168.1.171:3000/";
 axios.defaults.baseURL = "http://129.211.51.250:3000/";
 
 export let baseURL=axios.defaults.baseURL;
-axios.defaults.timeout = 5000;
+axios.defaults.timeout = 10000;
 // const FDFSURL=process.env.FDFS_ENDPOINT;
 /** d
  * 封装post请求
@@ -118,7 +118,7 @@ export function get(url,data){
 
 export function baiduGetVoice(url,data){
   let headers = {'Content-Type': 'multipart/form-data'};
-  data.tok="24.6c3e42e2258b1da140401ed3b1bde610.2592000.1575430721.282335-17684060";
+  data.tok="24.8f3f7824a3068840c0743b0e939f7186.2592000.1580804026.282335-17684060";
   data.cuid="center";
   data.ctp=1;
   data.lan="zh";

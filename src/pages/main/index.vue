@@ -27,7 +27,7 @@
     <LinksAdd v-if="linksAddShow" @close="tapLink" @finish="getLinks"/>
     <LinksEdit v-if="linksEditShow" @close="tapLinkEdit" @finish="getLinks" :info="linksEditItem"/>
     <!--以上是链接部分-->
-    <TipsArea/>
+    <TipsArea />
     <NavBottom/>
   </div>
 </template>
