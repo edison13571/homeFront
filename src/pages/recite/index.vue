@@ -22,7 +22,7 @@
         <div class="recite-main-detail" v-if="type==='tips20'">{{showInfo(20)}}</div>
         <div class="recite-main-detail" v-if="type==='tips50'">{{showInfo(50)}}</div>
         <div class="recite-main-detail" v-if="type==='tips100'">{{showInfo(100)}}</div>
-          <audio :src="audio" controls></audio>
+          <audio :src="audio" controls id="main-audio"></audio>
           <div class="recite-main-detail-spd">
             <div class="recite-main-detail-spd-label">速度</div>
             <input type="number" min="0" max="15" v-model="spd"/>
@@ -70,8 +70,33 @@
     created() {
       this.getAllAverage();
       this.getReciteType()
+
+    },
+    mounted:function () {
+      document.onkeydown  =cdk.bind(this);
+      let self = this;
+      function cdk() {
+        let e1 =  event || window.event || arguments.callee.caller.arguments[0]
+        let ctrlKey = e1.ctrlKey ;
+        if(e1.keyCode===37){
+          self.playAudio()
+        } else if(e1.keyCode===39){
+          if (self.answerRight || ctrlKey ) {
+            // console.log(6)
+            self.getRight()
+          }
+        } else if(e1.keyCode===38){
+          self.changeShow()
+        }else if(e1.keyCode===40){
+          self.getIssue()
+        }
+      }
     },
     methods: {
+      playAudio(){
+        let player = document.getElementById('main-audio')
+        player.play()
+      },
       getReciteType(){
         issueAllReciteType({type:"recall"}).then(res=>{
           let arr=res.data;
@@ -198,6 +223,7 @@
               res+=str[i]
             }
           }
+          res = res.replace(/^\s*|\s*$/g,"")
           return res;
         }
         this.answerRight=strHandle(answer)===strHandle(test)
