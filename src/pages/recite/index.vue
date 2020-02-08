@@ -2,6 +2,7 @@
   <div class="main">
     <div class="recite-wrap-top">
       <div class="recite-wrap-top-unit" @click="changeShow">题案交换</div>
+      <div class="recite-wrap-top-unit" @click="changeThemeShow">主题检索</div>
       <div class="recite-wrap-top-unit">全部({{allAverage}})</div>
       <div v-for="(item,index) in reciteList" :key="index" @click="changeReciteType(item)" class="recite-wrap-top-unit">{{item}}{{reciteType===item?"("+subAverage+")":""}}</div>
       <div class="recite-wrap-top-unit" @click="changeNav">{{nav?"关闭":"打开"}}导航</div>
@@ -37,6 +38,9 @@
       <div v-if="answerRight" class="search-button"  @click="getRight">下一题</div>
       <div v-else class="search-button" ></div>
     </div>
+    <div class="search-area"  v-show="themeShow">
+      <input class="search-input" placeholder="主题检索" v-model="searchTheme"/>
+    </div>
     <div v-show="answerRight" class="recite-name">{{titleTips?info.tips:info.title}}</div>
     <!--以上是链接部分-->
     <NavBottom v-show="nav"/>
@@ -56,6 +60,7 @@
         type: "issue",
         reciteList:["英文短语","英文单词","中文语句","名词中文解释","数字","日文单词","日语五十音"],
         reciteType:"英文短语",
+        searchTheme:'',
         allAverage:0,
         subAverage:0,
         nav:false,
@@ -64,7 +69,8 @@
         answerRight:false,
         audio:"",
         spd:4,
-        cache:[]
+        cache:[],
+        themeShow:false
       }
     },
     created() {
@@ -93,6 +99,9 @@
       }
     },
     methods: {
+      changeThemeShow(){
+        this.themeShow=!this.themeShow
+      },
       playAudio(){
         let player = document.getElementById('main-audio')
         player.play()
@@ -121,7 +130,14 @@
         this.getIssue()
       },
       getIssue(){
-        queryByReciteType({reciteType:this.reciteType}).then(res=>{
+        let data = {};
+        data.reciteType = this.reciteType;
+        if (this.searchTheme) {
+          data.theme =this.searchTheme
+        }
+
+        // console.log(data)
+        queryByReciteType(data).then(res=>{
           this.info=res.data.unit?res.data.unit:{};
           this.answerRight=false;
           this.type="issue";
