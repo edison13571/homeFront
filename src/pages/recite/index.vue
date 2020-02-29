@@ -3,6 +3,7 @@
     <div class="recite-wrap-top">
       <div class="recite-wrap-top-unit" @click="changeShow">题案交换</div>
       <div class="recite-wrap-top-unit" @click="changeThemeShow">主题检索</div>
+      <div class="recite-wrap-top-unit" @click="changeInputType">输入框</div>
       <div class="recite-wrap-top-unit">全部({{allAverage}})</div>
       <div v-for="(item,index) in reciteList" :key="index" @click="changeReciteType(item)" class="recite-wrap-top-unit">{{item}}{{reciteType===item?"("+subAverage+")":""}}</div>
       <div class="recite-wrap-top-unit" @click="changeNav">{{nav?"关闭":"打开"}}导航</div>
@@ -33,7 +34,8 @@
 
     </div>
     <div class="search-area">
-      <input class="search-input" placeholder="输入答案" v-model="answer" v-on:keyup="checkAnswer"/>
+      <input v-if="inputType==='input'" class="search-input" placeholder="输入答案" v-model="answer" v-on:keyup="checkAnswer"/>
+      <textarea v-else class="search-input-textarea" placeholder="输入答案" v-model="answer" v-on:keyup="checkAnswer"/>
       <div class="search-button" @click="getIssue">跳过</div>
       <div v-if="answerRight" class="search-button"  @click="getRight">下一题</div>
       <div v-else class="search-button" ></div>
@@ -70,7 +72,8 @@
         audio:"",
         spd:4,
         cache:[],
-        themeShow:false
+        themeShow:false,
+        inputType: 'input'
       }
     },
     created() {
@@ -99,6 +102,9 @@
       }
     },
     methods: {
+      changeInputType() {
+        this.inputType = this.inputType==='input'?'textarea':'input'
+      },
       changeThemeShow(){
         this.themeShow=!this.themeShow
       },
@@ -355,6 +361,14 @@
     border-radius: 5px;
   }
 
+  .search-input-textarea{
+    flex: 1;
+    margin: 20px;
+    height: 100px;
+    background: white;
+    padding: 10px 20px;
+    border-radius: 5px;
+  }
   .search-button {
     cursor: pointer;
     margin-right: 10px;
