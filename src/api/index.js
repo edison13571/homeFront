@@ -118,7 +118,7 @@ export function get(url,data){
 
 export function baiduGetVoice(url,data){
   let headers = {'Content-Type': 'multipart/form-data'};
-  data.tok="24.8b662e5ff9735ecd89be7575b28ba747.2592000.1583411632.282335-17684060";
+  data.tok="25.8d9dcefbd7c8817e7f0e37875efd332b.315360000.1899030405.282335-17684060";
   data.cuid="center";
   data.ctp=1;
   data.lan="zh";
