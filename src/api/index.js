@@ -3,7 +3,7 @@ import qs from 'qs';
 
 
 // axios.defaults.baseURL = "http://192.168.1.6:3000/";
-axios.defaults.baseURL = "http://129.211.51.250:3000/";
+axios.defaults.baseURL = "https://api.iam66.com/";
 
 export let baseURL=axios.defaults.baseURL;
 axios.defaults.timeout = 10000;
@@ -302,4 +302,16 @@ export function habitsAddRecord(data) {
 
 export function habitsQueryRecord(data) {
   return post('/api/habits/queryRecord',data);
+}
+
+export function articlesList(data) {
+  return get('/api/articles/query',data);
+}
+
+export function articlesAddNew(data) {
+  return post('/api/articles/add',data);
+}
+
+export function articlesEditInfo(data) {
+  return post('/api/articles/update', data);
 }

@@ -1,6 +1,7 @@
 <template>
   <div class="nav-wrap">
     <router-link to="main" class="nav-wrap-unit">桌面</router-link>
+    <router-link to="articles" class="nav-wrap-unit">文章</router-link>
     <router-link to="note" class="nav-wrap-unit">便签</router-link>
     <router-link to="habits" class="nav-wrap-unit">习惯</router-link>
     <router-link to="recite" class="nav-wrap-unit">背诵</router-link>
