@@ -23,6 +23,10 @@
         <input class="memoryDate-add-unit-input" v-model="theme"/>
       </div>
       <div class="memoryDate-add-unit">
+        <div class="memoryDate-add-unit-label">系列</div>
+        <input class="memoryDate-add-unit-input" v-model="series"/>
+      </div>
+      <div class="memoryDate-add-unit">
         <div class="memoryDate-add-unit-label">类型</div>
         <input class="memoryDate-add-unit-input" v-model="type"/>
       </div>
@@ -65,6 +69,7 @@ export default {
         type:"",
         location:"",
         url:"",
+        series:"",
         words:"",
         publicAble:false,
         tags:[],
@@ -87,6 +92,7 @@ export default {
       this.type=info.type;
       this.location=info.location;
       this.url=info.url;
+      this.url=info.series;
       this.words=info.words;
       this.publicAble=info.publicAble;
       this.tags=info.tags;
@@ -105,24 +111,13 @@ export default {
         data.title=this.title;
         data.id=this.id;
         data.publicAble=this.publicAble;
-        if(this.tags.length>0){
           data.tags=this.tags;
-        }
-        if(this.words){
           data.words=this.words;
-        }
-        if(this.location){
           data.location=this.location;
-        }
-        if(this.url){
           data.url=this.url;
-        }
-        if(this.theme){
+          data.series=this.series;
           data.theme=this.theme;
-        }
-        if(this.type){
           data.type=this.type;
-        }
         articlesEditInfo(data).then(res=>{
           if (res.success){
             this.$emit('finish')

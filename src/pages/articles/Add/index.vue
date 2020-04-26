@@ -23,6 +23,10 @@
         <input class="memoryDate-add-unit-input" v-model="theme"/>
       </div>
       <div class="memoryDate-add-unit">
+        <div class="memoryDate-add-unit-label">系列</div>
+        <input class="memoryDate-add-unit-input" v-model="series"/>
+      </div>
+      <div class="memoryDate-add-unit">
         <div class="memoryDate-add-unit-label">类型</div>
         <input class="memoryDate-add-unit-input" v-model="type"/>
       </div>
@@ -65,6 +69,7 @@
         type:"",
         location:"",
         url:"",
+        series:"",
         words:"",
         publicAble:false,
         tags:[],
@@ -84,24 +89,13 @@
         data.title=this.title;
         data.id=this.id;
         data.publicAble=this.publicAble;
-        if(this.tags.length>0){
-          data.tags=this.tags;
-        }
-        if(this.words){
-          data.words=this.words;
-        }
-        if(this.location){
-          data.location=this.location;
-        }
-        if(this.url){
-          data.url=this.url;
-        }
-        if(this.theme){
-          data.theme=this.theme;
-        }
-        if(this.type){
-          data.type=this.type;
-        }
+        data.tags=this.tags;
+        data.words=this.words;
+        data.location=this.location;
+        data.url=this.url;
+        data.series=this.series;
+        data.theme=this.theme;
+        data.type=this.type;
         articlesAddNew(data).then(res=>{
           if (res.success){
             this.$emit('finish')
