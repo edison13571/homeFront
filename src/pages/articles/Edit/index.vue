@@ -92,7 +92,7 @@ export default {
       this.type=info.type;
       this.location=info.location;
       this.url=info.url;
-      this.url=info.series;
+      this.series=info.series;
       this.words=info.words;
       this.publicAble=info.publicAble;
       this.tags=info.tags;
