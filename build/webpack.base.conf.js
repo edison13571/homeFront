@@ -23,8 +23,7 @@ module.exports = {
       : config.dev.assetsPublicPath
   },
   externals: {
-    moment:"moment",
-    vue:"Vue"
+    moment:"moment"
   },
   resolve: {
     extensions: ['.js', '.vue', '.json'],
