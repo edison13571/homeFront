@@ -315,3 +315,7 @@ export function articlesAddNew(data) {
 export function articlesEditInfo(data) {
   return post('/api/articles/update', data);
 }
+
+export function qiniuUpload(data) {
+  return postUpload('/api/qiniu/upload', data)
+}

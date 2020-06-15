@@ -12,6 +12,7 @@ import Recite from '@/pages/recite'
 import IssueAddPage from '@/pages/issue/add'
 import StatsIndex from '@/pages/stats'
 import ArticlesIndex from '@/pages/articles'
+import Upload from '@/pages/upload'
 
 Vue.use(Router)
 
@@ -76,6 +77,11 @@ export default new Router({
       path: '/articles',
       name: 'articles',
       component: ArticlesIndex
+    },
+    {
+      path: '/upload',
+      name: 'upload',
+      component: Upload
     }
   ]
 })
