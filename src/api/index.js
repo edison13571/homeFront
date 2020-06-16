@@ -2,7 +2,7 @@ import axios from 'axios';
 import qs from 'qs';
 
 
-// axios.defaults.baseURL = "http://192.168.1.6:3000/";
+// axios.defaults.baseURL = "http://192.168.1.170:3000/";
 axios.defaults.baseURL = "https://api.iam66.com/";
 
 export let baseURL=axios.defaults.baseURL;
@@ -298,6 +298,22 @@ export function habitsEditInfo(data) {
 
 export function habitsAddRecord(data) {
   return post('/api/habits/addRecord',data);
+}
+
+export function practiceList(data) {
+  return get('/api/practice/query',data);
+}
+
+export function practiceAddNew(data) {
+  return post('/api/practice/add',data);
+}
+
+export function practiceEditInfo(data) {
+  return post('/api/practice/update',data);
+}
+
+export function practiceAddRecord(data) {
+  return post('/api/practice/addRecord',data);
 }
 
 export function habitsQueryRecord(data) {

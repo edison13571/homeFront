@@ -8,6 +8,7 @@ import Book from '@/pages/books'
 import MemoryDate from '@/pages/memoryDate'
 import Note from '@/pages/note'
 import Habits from '@/pages/habits'
+import Practice from '@/pages/practice'
 import Recite from '@/pages/recite'
 import IssueAddPage from '@/pages/issue/add'
 import StatsIndex from '@/pages/stats'
@@ -82,6 +83,11 @@ export default new Router({
       path: '/upload',
       name: 'upload',
       component: Upload
+    },
+    {
+      path: '/practice',
+      name: 'practice',
+      component: Practice
     }
   ]
 })
