@@ -10,7 +10,7 @@
       </div>
     </div>
     <div class="note-wrap" v-if="issueList.length>0">
-      <div v-for="(item,index) in issueList" :key="index" class="title-list" @click="linksHover(item)" @mouseout="linksHoverOut">{{item.title}}</div>
+      <div v-for="(item,index) in issueList" :key="index" class="title-list" @click="linksHover(item)" @mouseout="linksHoverOut">{{item.title}}<span class="title-list-span">{{item.recallTimes}}</span></div>
     </div>
     <div class="note-wrap" style="color: #7393a7">
       {{tips}}
@@ -171,5 +171,15 @@
   .title-list{
     color: #7393a7;
     margin:5px 10px;
+  }
+  .title-list-span{
+    color: rgba(255,255,255,0.7);
+    font-size: 14px;
+    margin-left: 5px;
+    /*visibility: hidden;*/
+  }
+  .title-list:hover .title-list-span{
+    color: rgba(255,255,255,1);
+    /*visibility: visible;*/
   }
 </style>
