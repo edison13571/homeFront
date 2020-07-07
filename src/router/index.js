@@ -14,6 +14,7 @@ import IssueAddPage from '@/pages/issue/add'
 import StatsIndex from '@/pages/stats'
 import ArticlesIndex from '@/pages/articles'
 import Upload from '@/pages/upload'
+import Board from '@/pages/board'
 
 Vue.use(Router)
 
@@ -88,6 +89,11 @@ export default new Router({
       path: '/practice',
       name: 'practice',
       component: Practice
+    },
+    {
+      path: '/board',
+      name: 'board',
+      component: Board
     }
   ]
 })

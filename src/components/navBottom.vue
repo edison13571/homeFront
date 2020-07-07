@@ -12,6 +12,7 @@
     <router-link to="issueAddPage" class="nav-wrap-unit">填鸭</router-link>
     <router-link to="stats" class="nav-wrap-unit">统计</router-link>
     <router-link to="upload" class="nav-wrap-unit">上传</router-link>
+    <router-link to="board" class="nav-wrap-unit">板子</router-link>
   </div>
 </template>
 
