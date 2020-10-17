@@ -10,10 +10,20 @@
       </div>
     </div>
     <div class="note-wrap" v-if="issueList.length>0">
-      <div v-for="(item,index) in issueList" :key="index" class="title-list" @click="linksHover(item)" @mouseout="linksHoverOut">{{item.title}}<span class="title-list-span">{{item.recallTimes}}</span></div>
+      <div v-for="(item,index) in issueList" :key="index" class="title-list" @click="linksHover(item)">{{item.title}}<span class="title-list-span">{{item.recallTimes}}</span></div>
     </div>
     <div class="note-wrap" style="color: #7393a7">
-      {{tips}}
+      <div>
+        <div style="margin-bottom: 15px">
+          {{tips}}
+        </div>
+        <div v-show="tips" style="display: flex">
+          <div class="links-add-unit-button" @click="linksHoverOut">关闭</div>
+          <div class="links-add-unit-button" @click="changeTime('now')">立刻</div>
+          <div class="links-add-unit-button" @click="changeTime('next')">推迟</div>
+          <div>下次复习时间：{{recallDate}}</div>
+        </div>
+      </div>
     </div>
     <!--以上是链接部分-->
     <NavBottom/>
@@ -21,7 +31,7 @@
 </template>
 
 <script>
-  import {issueAllTheme,issueAllReciteType,issuesStats} from "../../api";
+  import {issueAllTheme,issueAllReciteType,issuesStats,issueEdit} from "../../api";
   import NavBottom from "../../components/navBottom"
 
   export default {
@@ -36,6 +46,8 @@
         reciteTypeList:[],
         themeList:[],
         issueList:[],
+        recallDate:'',
+        activeIssue: null
       }
     },
     created() {
@@ -86,11 +98,41 @@
         }
       },
       linksHover(item) {
+        this.activeIssue = item;
         this.tips = item.tips||item.title;
+        this.recallDate=this.$moment(item.recallDate).format('YYYY-MM-DD HH:mm:ss')
       },
       linksHoverOut() {
+        this.activeIssue=null;
         this.tips = ""
+        this.recallDate=""
       },
+      changeTime(type){
+        console.log(type)
+        if(this.activeIssue){
+          let item = this.activeIssue;
+          if (type==='now'){
+            item.recallDate = this.$moment().valueOf()
+            item.recall = 'none'
+          } else if (type==='next'){
+            let time = item.recallDate
+            item.recallDate = this.$moment(time).add(1, 'months').valueOf()
+          }
+          this.editItem(item)
+        }
+
+      },
+      editItem(item){
+        item.id=item._id
+        issueEdit(item).then(res=>{
+          this.recallDate=this.$moment(item.recallDate).format('YYYY-MM-DD HH:mm:ss')
+          this.$message({
+            message: '修改成功',
+            type: 'success',
+            duration:800
+          });
+        })
+      }
     }
   }
 </script>
@@ -171,6 +213,7 @@
   .title-list{
     color: #7393a7;
     margin:5px 10px;
+    cursor: pointer;
   }
   .title-list-span{
     color: rgba(255,255,255,0.7);
