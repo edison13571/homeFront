@@ -8,7 +8,7 @@
       </div>
       <div class="links-add-unit">
         <div class="links-add-unit-label">提示</div>
-        <input class="links-add-unit-input" v-model="tips"/>
+        <textarea class="links-add-unit-input" v-model="tips"/>
       </div>
 
       <div class="links-add-unit">
